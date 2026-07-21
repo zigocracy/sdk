@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-	implementation(project(":meta-grammar-annotations"))
+	compileOnly(project(":meta-grammar-annotations"))
 	ksp(project(":meta-grammar-processors"))
 	testImplementation(libs.junit.jupiter)
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
