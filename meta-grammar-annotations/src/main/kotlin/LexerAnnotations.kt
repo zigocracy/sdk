@@ -7,9 +7,8 @@ package net.landless_city.zigocracy.grammar.annotations
  * such as arithmetic (`+`, `*`), comparison (`==`, `<=`), logical (`&&`, `||`), or assignment
  * (`=`, `+=`) operators.
  *
- * The annotated class must be a singleton object (Kotlin `object`) representing a specific
- * operator token type. The [symbol] parameter defines the exact character sequence that will
- * be recognized by the lexer.
+ * The annotated element must be an enum entry of an `@GrammarRoot`-annotated enum class.
+ * The [symbol] parameter defines the exact character sequence that will be recognized by the lexer.
  *
  * ## Symbol Ordering
  *
@@ -20,14 +19,12 @@ package net.landless_city.zigocracy.grammar.annotations
  * ## Example
  *
  * ```kotlin
- * @Operator(">=")
- * object RArrowEqual : TokenType()
- *
- * @Operator(">>")
- * object RArrow2 : TokenType()
- *
- * @Operator(">")
- * object RArrow : TokenType()
+ * @GrammarRoot
+ * enum class TokenKind {
+ *     @Operator(">=") RArrowEqual,
+ *     @Operator(">>") RArrow2,
+ *     @Operator(">")  RArrow,
+ * }
  * ```
  *
  * @property symbol The exact character sequence that represents this operator in source code.
@@ -50,9 +47,8 @@ public annotation class Operator(
  * be used as user-defined names. Examples include control flow keywords (`if`, `while`),
  * declaration keywords (`fn`, `const`), and type keywords (`struct`, `enum`).
  *
- * The annotated class must be a singleton object (Kotlin `object`) representing a specific
- * keyword token type. The [symbol] parameter defines the exact text that will be recognized
- * by the lexer.
+ * The annotated element must be an enum entry of an `@GrammarRoot`-annotated enum class.
+ * The [symbol] parameter defines the exact text that will be recognized by the lexer.
  *
  * ## Lexical Considerations
  *
@@ -63,14 +59,12 @@ public annotation class Operator(
  * ## Example
  *
  * ```kotlin
- * @Keyword("if")
- * object KeywordIf : TokenType()
- *
- * @Keyword("while")
- * object KeywordWhile : TokenType()
- *
- * @Keyword("const")
- * object KeywordConst : TokenType()
+ * @GrammarRoot
+ * enum class TokenKind {
+ *     @Keyword("if")    KeywordIf,
+ *     @Keyword("while") KeywordWhile,
+ *     @Keyword("const") KeywordConst,
+ * }
  * ```
  *
  * @property symbol The exact keyword text that represents this token in source code.
@@ -93,9 +87,8 @@ public annotation class Keyword(
  * such as parentheses (`(`, `)`), braces (`{`, `}`), brackets (`[`, `]`), and separators
  * (`,`, `;`, `:`).
  *
- * The annotated class must be a singleton object (Kotlin `object`) representing a specific
- * punctuation token type. The [symbol] parameter defines the exact character sequence that
- * will be recognized by the lexer.
+ * The annotated element must be an enum entry of an `@GrammarRoot`-annotated enum class.
+ * The [symbol] parameter defines the exact character sequence that will be recognized by the lexer.
  *
  * ## Distinction from Operators
  *
@@ -106,14 +99,12 @@ public annotation class Keyword(
  * ## Example
  *
  * ```kotlin
- * @Punctuation("(")
- * object LeftParen : TokenType()
- *
- * @Punctuation(")")
- * object RightParen : TokenType()
- *
- * @Punctuation(";")
- * object Semicolon : TokenType()
+ * @GrammarRoot
+ * enum class TokenKind {
+ *     @Punctuation("(") LeftParen,
+ *     @Punctuation(")") RightParen,
+ *     @Punctuation(";") Semicolon,
+ * }
  * ```
  *
  * @property symbol The exact character sequence that represents this punctuation in source code.
@@ -148,20 +139,19 @@ public annotation class Punctuation(
  * ## Example
  *
  * ```kotlin
- * @Synthetic
- * object EndOfFile : TokenType()
- *
- * @Synthetic
- * object ErrorToken : TokenType()
- *
- * @Synthetic
- * object ImplicitSemicolon : TokenType()
+ * @GrammarRoot
+ * enum class TokenKind {
+ *     @Synthetic Identifier,
+ *     @Synthetic EndOfFile,
+ *     @Synthetic ErrorToken,
+ *     @Synthetic ImplicitSemicolon,
+ * }
  * ```
  *
  * ## Mutual Exclusivity
  *
- * A token type cannot be both synthetic and have a lexical representation. Do not combine
- * `@Synthetic` with `@Operator`, `@Keyword`, or `@Punctuation` annotations.
+ * An entry annotated with `@Synthetic` cannot also carry `@Operator`, `@Keyword`, or
+ * `@Punctuation` annotations.
  *
  * @see Operator
  * @see Keyword

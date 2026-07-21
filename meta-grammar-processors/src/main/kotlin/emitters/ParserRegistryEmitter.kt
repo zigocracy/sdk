@@ -2,6 +2,7 @@ package net.landless_city.zigocracy.processor.emitters
 
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.writeTo
 import net.landless_city.zigocracy.grammar.annotations.Associativity
@@ -12,8 +13,7 @@ import net.landless_city.zigocracy.processor.ResolvedGrammar
  * Emits `GeneratedParserRegistry`: lookup tables for prefix, suffix, and infix
  * operators used by the precedence-climbing expression parser.
  *
- * This emitter produces the same output that the old `ParserProcessor` generated
- * directly, but now consumes the shared [ResolvedGrammar].
+ * This emitter consumes the shared [ResolvedGrammar].
  */
 public class ParserRegistryEmitter(
 	private val codeGenerator: CodeGenerator
@@ -69,8 +69,7 @@ public class ParserRegistryEmitter(
                 
                 Example:
                 ```kotlin
-                check(Minus in GeneratedParserRegistry.prefixOperators)
-                check(ExclamationMark in GeneratedParserRegistry.prefixOperators)
+                check(TokenKind.Minus in GeneratedParserRegistry.prefixOperators)
                 ```
                 """.trimIndent()
 			)
@@ -78,7 +77,7 @@ public class ParserRegistryEmitter(
 				add("setOf(\n")
 				withIndent {
 					prefixes.forEach { token ->
-						add("%T,\n", token.className)
+						add("%M,\n", token.className.member(token.entryName))
 					}
 				}
 				add(")")
@@ -97,8 +96,8 @@ public class ParserRegistryEmitter(
                 
                 Example:
                 ```kotlin
-                check(Dot in GeneratedParserRegistry.suffixOperators)
-                check(DotQuestionMark in GeneratedParserRegistry.suffixOperators)
+                check(TokenKind.Dot in GeneratedParserRegistry.suffixOperators)
+                check(TokenKind.DotQuestionMark in GeneratedParserRegistry.suffixOperators)
                 ```
                 """.trimIndent()
 			)
@@ -106,7 +105,7 @@ public class ParserRegistryEmitter(
 				add("setOf(\n")
 				withIndent {
 					suffixes.forEach { token ->
-						add("%T,\n", token.className)
+						add("%M,\n", token.className.member(token.entryName))
 					}
 				}
 				add(")")
@@ -127,7 +126,7 @@ public class ParserRegistryEmitter(
                 
                 Example:
                 ```kotlin
-                val plusInfo = GeneratedParserRegistry.infixOperators[Plus]
+                val plusInfo = GeneratedParserRegistry.infixOperators[TokenKind.Plus]
                 check(plusInfo?.precedence == 50)
                 check(plusInfo?.associativity == Associativity.LEFT)
                 ```
@@ -139,8 +138,8 @@ public class ParserRegistryEmitter(
 					infixes.forEach { token ->
 						val infix = token.infix!!
 						add(
-							"%T to InfixInfo(precedence = %L, associativity = %T.%L),\n",
-							token.className,
+							"%M to InfixInfo(precedence = %L, associativity = %T.%L),\n",
+							token.className.member(token.entryName),
 							infix.precedence,
 							Associativity::class,
 							infix.associativity

@@ -23,8 +23,8 @@ import net.landless_city.zigocracy.grammar.annotations.Associativity
  *   emitter, or an LSP semantic-tokens emitter each just implement [GrammarEmitter]
  *   and consume this model.
  *
- * @property rootType The sealed root of the token hierarchy (e.g. `language.syntax.TokenType`).
- * @property tokens Every token object discovered in the sealed hierarchy, with all of its
+ * @property rootType The enum root of the token hierarchy (e.g. `language.syntax.TokenKind`).
+ * @property tokens Every token entry discovered in the enum, with all of its
  *     resolved metadata (symbol, kind, operator position, precedence, etc.).
  *
  * @see GrammarResolver
@@ -59,7 +59,7 @@ public data class ResolvedGrammar(
 	/** Tokens that participate in infix expressions, sorted by precedence then name. */
 	val infixOperators: List<ResolvedToken> by lazy {
 		tokens.filter { it.infix != null }
-			.sortedWith(compareBy({ it.infix!!.precedence }, { it.className.simpleName }))
+			.sortedWith(compareBy({ it.infix!!.precedence }, { it.entryName }))
 	}
 
 	/** Tokens usable in prefix position. */
@@ -74,7 +74,7 @@ public data class ResolvedGrammar(
 }
 
 /**
- * Complete metadata for a single token object, resolved from annotations.
+ * Complete metadata for a single token entry, resolved from annotations.
  *
  * A token may be `@Synthetic` (in which case [kind] and [symbol] are both `null`)
  * or it may carry exactly one of `@Keyword`, `@Operator`, or `@Punctuation`
@@ -83,7 +83,8 @@ public data class ResolvedGrammar(
  * Operator-position annotations (`@Prefix`, `@Infix`, `@Suffix`) are orthogonal
  * and may be combined freely.
  *
- * @property className The fully-qualified [ClassName] of the Kotlin `object`.
+ * @property className The fully-qualified [ClassName] of the enum class (e.g. `TokenKind`).
+ * @property entryName The name of the enum entry (e.g. `"KeywordIf"`, `"Plus"`).
  * @property symbol The character sequence this token matches, or `null` for synthetics.
  * @property kind The lexical category, or `null` for synthetics.
  * @property isPrefix Whether this token is annotated with `@Prefix`.
@@ -93,6 +94,7 @@ public data class ResolvedGrammar(
  */
 public data class ResolvedToken(
 	val className: ClassName,
+	val entryName: String,
 	val symbol: String?,
 	val kind: TokenKind?,
 	val isPrefix: Boolean,

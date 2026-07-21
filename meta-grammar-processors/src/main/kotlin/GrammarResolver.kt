@@ -26,8 +26,9 @@ import net.landless_city.zigocracy.grammar.annotations.*
  * missing metadata) and constructs the model exactly once. Emitters receive a fully
  * validated, immutable snapshot and never need to touch KSP APIs.
  *
- * The root type may be either a `sealed class` or a `sealed interface` annotated with
- * [GrammarRoot]. Concrete `object` subclasses are collected in the same way regardless.
+ * The root type must be an `enum class` annotated with [GrammarRoot]. Annotated enum
+ * entries are collected as tokens. Entries without any annotations are treated as
+ * having lexical representation only (they still appear in token-order sequences).
  *
  * ## Emitter registration
  *
@@ -58,7 +59,7 @@ public class GrammarResolver(
 
 		val root: KSClassDeclaration = when (rootDeclarations.size) {
 			0 -> {
-				logger.error("No type annotated with @GrammarRoot found! Annotate your sealed root, e.g., `@GrammarRoot sealed class TokenType` or `@GrammarRoot sealed interface TokenType`.")
+				logger.error("No type annotated with @GrammarRoot found! Annotate your enum root, e.g., `@GrammarRoot enum class TokenKind`.")
 				return emptyList()
 			}
 
@@ -70,16 +71,16 @@ public class GrammarResolver(
 			}
 		}
 
-		if (Modifier.SEALED !in root.modifiers) {
-			logger.error("@GrammarRoot type '${root.simpleName.asString()}' must be sealed (sealed class or sealed interface). Non-sealed types cannot define token hierarchies.")
+		if (Modifier.ENUM !in root.modifiers) {
+			logger.error("@GrammarRoot type '${root.simpleName.asString()}' must be an enum class. Non-enum types cannot define token hierarchies.")
 			return emptyList()
 		}
 
-		val tokenObjects = resolveObjectChildrenOfSealed(root)
+		val tokenEntries = resolveEnumEntries(root)
 
-		// ── Phase 1: Extract annotation data from every token object ────
+		// ── Phase 1: Extract annotation data from every token entry ─────
 
-		val resolvedTokens = buildResolvedTokens(tokenObjects)
+		val resolvedTokens = buildResolvedTokens(root, tokenEntries)
 
 		// ── Phase 2: Validate cross-token invariants ────────────────────
 
@@ -110,29 +111,37 @@ public class GrammarResolver(
 	// ── Annotation extraction ───────────────────────────────────────────
 
 	/**
-	 * Reads all lexer and parser annotations from each token object and
+	 * Reads all lexer and parser annotations from each token entry and
 	 * constructs a [ResolvedToken] for it.
 	 *
 	 * Tokens with no annotations at all are reported as errors and skipped.
 	 * Tokens annotated as `@Synthetic` that also carry lexical annotations
 	 * are reported as errors and skipped.
 	 */
-	private fun buildResolvedTokens(tokenObjects: List<KSClassDeclaration>): List<ResolvedToken> =
-		buildList {
-			for (obj in tokenObjects) {
-				val resolved = resolveToken(obj)
-				if (resolved != null) add(resolved)
-			}
+	private fun buildResolvedTokens(
+		root: KSClassDeclaration,
+		tokenEntries: List<KSClassDeclaration>
+	): List<ResolvedToken> = buildList {
+		val rootClassName = root.toClassName()
+		for (entry in tokenEntries) {
+			val resolved = resolveEntry(rootClassName, entry)
+			if (resolved != null) add(resolved)
 		}
+	}
 
-	private fun resolveToken(obj: KSClassDeclaration): ResolvedToken? {
-		val operatorAnnotations: List<Operator> = obj.getAnnotationsByType()
-		val keywordAnnotations: List<Keyword> = obj.getAnnotationsByType()
-		val punctuationAnnotations: List<Punctuation> = obj.getAnnotationsByType()
-		val syntheticAnnotations: List<Synthetic> = obj.getAnnotationsByType()
-		val prefixAnnotations: List<Prefix> = obj.getAnnotationsByType()
-		val suffixAnnotations: List<Suffix> = obj.getAnnotationsByType()
-		val infixAnnotations: List<Infix> = obj.getAnnotationsByType()
+	private fun resolveEntry(
+		rootClassName: com.squareup.kotlinpoet.ClassName,
+		entry: KSClassDeclaration
+	): ResolvedToken? {
+		val entryName = entry.simpleName.asString()
+
+		val operatorAnnotations: List<Operator> = entry.getAnnotationsByType()
+		val keywordAnnotations: List<Keyword> = entry.getAnnotationsByType()
+		val punctuationAnnotations: List<Punctuation> = entry.getAnnotationsByType()
+		val syntheticAnnotations: List<Synthetic> = entry.getAnnotationsByType()
+		val prefixAnnotations: List<Prefix> = entry.getAnnotationsByType()
+		val suffixAnnotations: List<Suffix> = entry.getAnnotationsByType()
+		val infixAnnotations: List<Infix> = entry.getAnnotationsByType()
 
 		// Must have at least one kind annotation.
 		val hasLexical = operatorAnnotations.isNotEmpty() ||
@@ -142,8 +151,8 @@ public class GrammarResolver(
 
 		if (!hasLexical && !hasSynthetic) {
 			logger.error(
-				"$obj has no @Operator, @Keyword, @Punctuation, or @Synthetic annotation",
-				obj
+				"$entryName has no @Operator, @Keyword, @Punctuation, or @Synthetic annotation",
+				entry
 			)
 			return null
 		}
@@ -153,19 +162,18 @@ public class GrammarResolver(
 			if (hasLexical) {
 				logger.error(
 					"""
-                    Conflict — $obj is annotated as @Synthetic
+                    Conflict — $entryName is annotated as @Synthetic
                     but also has @Operator/@Keyword/@Punctuation annotations.
                     Remove the other annotations.
                     """.trimIndent(),
-					obj
+					entry
 				)
 				return null
 			}
 
-			// Synthetic tokens can still have prefix/suffix/infix, though that would be unusual.
-			// For now, just return the bare synthetic.
 			return ResolvedToken(
-				className = obj.toClassName(),
+				className = rootClassName,
+				entryName = entryName,
 				symbol = null,
 				kind = null,
 				isPrefix = prefixAnnotations.isNotEmpty(),
@@ -183,7 +191,8 @@ public class GrammarResolver(
 		}
 
 		return ResolvedToken(
-			className = obj.toClassName(),
+			className = rootClassName,
+			entryName = entryName,
 			symbol = symbol,
 			kind = kind,
 			isPrefix = prefixAnnotations.isNotEmpty(),
@@ -196,11 +205,9 @@ public class GrammarResolver(
 	// ── Validation ──────────────────────────────────────────────────────
 
 	/**
-	 * Ensures no two distinct token objects claim the same symbol string.
+	 * Ensures no two distinct token entries claim the same symbol string.
 	 *
 	 * Returns `true` if the grammar is valid, `false` if errors were reported.
-	 * Duplicate visits of the *same* object (possible when it appears under
-	 * multiple sealed parents) are silently deduplicated.
 	 */
 	private fun validateSymbolUniqueness(tokens: List<ResolvedToken>): Boolean {
 		val symbolOwners = mutableMapOf<String, ResolvedToken>()
@@ -210,12 +217,12 @@ public class GrammarResolver(
 			val symbol = token.symbol ?: continue
 
 			val existing = symbolOwners[symbol]
-			if (existing != null && existing.className != token.className) {
+			if (existing != null && existing.entryName != token.entryName) {
 				logger.error(
 					"""
                     Conflict — same symbol '$symbol' registered twice:
-                    * By ${existing.className}
-                    * Now by ${token.className}
+                    * By ${existing.className.simpleName}.${existing.entryName}
+                    * Now by ${token.className.simpleName}.${token.entryName}
                     """.trimIndent()
 				)
 				valid = false

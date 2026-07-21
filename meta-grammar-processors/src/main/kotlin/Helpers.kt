@@ -4,34 +4,19 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.Modifier
 
 /**
- * Recursively collects all singleton `object` leaves in a sealed hierarchy.
+ * Collects all enum entries from an `@GrammarRoot`-annotated enum class.
  *
- * Sealed classes and sealed interfaces are traversed recursively; only concrete
- * `object` declarations are included in the result. Non-sealed, non-object
- * subtypes (e.g. `data class`) are silently skipped.
+ * Unlike the previous sealed-class design (which traversed `getSealedSubclasses()`),
+ * enum entries are direct children of the enum class. Only entries whose
+ * [ClassKind] is [ClassKind.ENUM_ENTRY] are included.
  */
-internal fun resolveObjectChildrenOfSealed(root: KSClassDeclaration): List<KSClassDeclaration> {
-	val tokenKinds: List<KSClassDeclaration> = buildList {
-		fun visit(node: KSClassDeclaration) {
-			for (sub in node.getSealedSubclasses()) {
-				when {
-					sub.classKind == ClassKind.OBJECT ->
-						add(sub)
-
-					sub.modifiers.contains(Modifier.SEALED) ->
-						visit(sub)
-
-					else -> {}
-				}
-			}
-		}
-		visit(root)
-	}
-
-	return tokenKinds
+internal fun resolveEnumEntries(root: KSClassDeclaration): List<KSClassDeclaration> {
+	return root.declarations
+		.filterIsInstance<KSClassDeclaration>()
+		.filter { it.classKind == ClassKind.ENUM_ENTRY }
+		.toList()
 }
 
 @OptIn(KspExperimental::class)

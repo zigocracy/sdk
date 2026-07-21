@@ -2,6 +2,7 @@ package net.landless_city.zigocracy.processor.emitters
 
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.writeTo
 import net.landless_city.zigocracy.processor.GrammarEmitter
@@ -10,14 +11,13 @@ import net.landless_city.zigocracy.processor.ResolvedToken
 
 /**
  * Emits `GeneratedLexerRegistry`: a bidirectional map between symbol strings
- * and their corresponding token-type singleton objects.
+ * and their corresponding [TokenKind] enum constants.
  *
  * The registry is ordered by symbol length (longest first) then lexicographically,
  * which enables greedy longest-match scanning in the lexer.
  *
- * This emitter produces the same output that the old `LexerProcessor` generated
- * directly, but now consumes the shared [net.landless_city.zigocracy.processor.ResolvedGrammar] instead of walking
- * KSP annotations itself.
+ * This emitter consumes the shared [net.landless_city.zigocracy.processor.ResolvedGrammar]
+ * instead of walking KSP annotations itself.
  */
 public class LexerRegistryEmitter(
 	private val codeGenerator: CodeGenerator
@@ -44,7 +44,7 @@ public class LexerRegistryEmitter(
 		val stringToTokenSpec = PropertySpec.builder("stringToToken", stringToTokenType)
 			.addKdoc(
 				"""
-                Maps string symbols to their corresponding [TokenType] singleton objects.
+                Maps string symbols to their corresponding [TokenKind] enum constants.
                 
                 Use this map during lexical analysis to convert source text into tokens. The map keys
                 are ordered by length (from longest to shortest), and lexicographically (from A to Z),
@@ -52,8 +52,8 @@ public class LexerRegistryEmitter(
                 
                 Example:
                 ```kotlin
-                check(GeneratedLexerRegistry.stringToToken[">>"] is RArrow2)
-                check(GeneratedLexerRegistry.stringToToken["if"] is KeywordIf)
+                check(GeneratedLexerRegistry.stringToToken[">>"] == TokenKind.RArrow2)
+                check(GeneratedLexerRegistry.stringToToken["if"] == TokenKind.KeywordIf)
                 ```
                 """.trimIndent()
 			)
@@ -61,7 +61,7 @@ public class LexerRegistryEmitter(
 				add("mapOf(\n")
 				withIndent {
 					sorted.forEach { token ->
-						add("%S to %T,\n", token.symbol, token.className)
+						add("%S to %M,\n", token.symbol, token.className.member(token.entryName))
 					}
 				}
 				add(")")
@@ -72,15 +72,15 @@ public class LexerRegistryEmitter(
 		val tokenToStringSpec = PropertySpec.builder("tokenToString", tokenToStringType)
 			.addKdoc(
 				"""
-                Maps [TokenType] singleton objects back to their canonical string representations.
+                Maps [TokenKind] enum constants back to their canonical string representations.
                 
                 Use this map for error reporting, pretty-printing, debugging, or code generation
                 where you need the textual form of a token.
                 
                 Example:
                 ```kotlin
-                check(GeneratedLexerRegistry.tokenToString[RArrow2] == ">>")
-                check(GeneratedLexerRegistry.tokenToString[KeywordIf] == "if")
+                check(GeneratedLexerRegistry.tokenToString[TokenKind.RArrow2] == ">>")
+                check(GeneratedLexerRegistry.tokenToString[TokenKind.KeywordIf] == "if")
                 ```
                 """.trimIndent()
 			)
@@ -88,7 +88,7 @@ public class LexerRegistryEmitter(
 				add("mapOf(\n")
 				withIndent {
 					sorted.forEach { token ->
-						add("%T to %S,\n", token.className, token.symbol)
+						add("%M to %S,\n", token.className.member(token.entryName), token.symbol)
 					}
 				}
 				add(")")
@@ -120,7 +120,7 @@ public class LexerRegistryEmitter(
 			.addKdoc(
 				"""
                 Registry providing bidirectional mapping between token symbols and their
-                corresponding [TokenType] instances.
+                corresponding [TokenKind] enum constants.
                 
                 This registry is automatically generated during compilation. It contains all
                 statically-defined tokens in the language — those whose identity is fixed and

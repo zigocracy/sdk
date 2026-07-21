@@ -20,10 +20,12 @@
  * A single token can serve multiple roles by applying multiple annotations:
  *
  * ```kotlin
- * @Operator("-")
- * @Prefix // -x (negation)
- * @Infix(precedence = 50, associativity = Associativity.LEFT) // a - b (subtraction)
- * object Minus : OperatorToken
+ * @GrammarRoot
+ * enum class TokenKind {
+ *     @Operator("-") @Prefix  // -x (negation)
+ *     @Infix(precedence = 50, associativity = Associativity.LEFT)  // a - b (subtraction)
+ *     Minus,
+ * }
  * ```
  *
  * @see Prefix
@@ -42,7 +44,7 @@ package net.landless_city.zigocracy.grammar.annotations
  * ```kotlin
  * @Operator("!")
  * @Prefix
- * object ExclamationMark : OperatorToken
+ * @GrammarRoot enum class TokenKind { ExclamationMark }
  * ```
  *
  * @see Infix
@@ -61,7 +63,7 @@ public annotation class Prefix
  * ```kotlin
  * @Operator("!!")
  * @Suffix
- * object ExclamationMark2 : OperatorToken
+ * @GrammarRoot enum class TokenKind { ExclamationMark2 }
  * ```
  *
  * @see Prefix
@@ -90,7 +92,7 @@ public annotation class Suffix
  * ```kotlin
  * @Operator("+")
  * @Infix(precedence = 50, associativity = Associativity.LEFT)
- * object Plus : OperatorToken
+ * @GrammarRoot enum class TokenKind { Plus }
  * ```
  *
  * @property precedence Binding strength (higher = tighter). Must be positive.
