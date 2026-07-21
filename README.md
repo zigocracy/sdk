@@ -1,21 +1,26 @@
 <!--
 style: Microsoft Writing Style Guide
-reason: Project landing page — structured docs index, minimal scope.
-doc-type: reference
-audience: Developers working with ZON data
+reason: Project overview — introduces the project and links to key documentation.
+doc-type: landing-page
+audience: Anyone reading the project home page
 -->
 
 # zigocracy
 
-An alternative Zig compiler and toolchain that explores interactive
+zigocracy is an alternative Zig compiler and toolchain. It explores interactive
 compile-time evaluation and customizable language tooling.
+
+The project is in active development. Everything you see here is an early
+prototype.
 
 ## Documentation
 
-### Zig Object Notation (ZON) format
+### Zig Object Notation (ZON)
+
+A data format from the Zig ecosystem for configuration and structured data — similar to JSON but with Zig syntax.
 
 - **[Guide][guide]** — friendly introduction for people new to ZON
-- **[Specification][spec]** — syntax, grammar, and value types for implementers
+- **[Specification][spec]** — syntax, grammar, and value types
 
 ### Tooling
 
@@ -23,12 +28,11 @@ compile-time evaluation and customizable language tooling.
 
 ### Contributing
 
-- **[Contributing guide][contrib]** — build the project from source, run tests,
-  or add new features. Start here if you want to change the code.
+- **[Contributing guide][contrib]** — build from source and contribute changes — code, documentation, or translations
 
 ## Licensing
 
-The project is licensed under Apache 2.0. Upstream test data and imported
+The project is licensed under Apache 2.0. Upstream test data and imported
 grammar files may use MIT or other permissive licenses; see individual files
 for details.
 

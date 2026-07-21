@@ -1,52 +1,56 @@
 <!--
 style: Microsoft Writing Style Guide
-reason: Onboarding document for new contributors — task-oriented, minimal prose, commands-first.
+reason: Zero-to-PR guide — copy-pasteable commands from clone to first pull request.
 doc-type: contributing-guide
-audience: Developers who want to build, test, and contribute to the project
+audience: New contributors setting up a dev environment for the first time
 -->
 
 # Contributing
 
-## Build
+## 1. Clone
+
+```shell
+git clone https://github.com/BratishkaErik/zigocracy
+cd zigocracy
+```
+
+## 2. Build
 
 ```shell
 ./gradlew build
 ```
 
-## Test
+## 3. Run tests
 
 ```shell
-# All tests
 ./gradlew test
-
-# Just the parser
-./gradlew ":zon-grammar:test"
-
-# Just the CLI
-./gradlew ":cli:test"
 ```
 
-## Validate a ZON file
+If you're iterating on one module, you can run just its tests for a faster loop:
 
 ```shell
-./gradlew ":cli:run" --args="path/to/file.zon"
-./gradlew ":cli:run" --args="path/to/directory"
+./gradlew ":zon-grammar:test"   # parser only
+./gradlew ":cli:test"           # CLI only
 ```
 
-## Documentation
+Run `./gradlew test` before submitting to make sure everything still passes together.
 
-Docs live in [docs/][docs-root]:
+## 4. Submit a pull request
 
-- [ZON guide][guide] — tutorial for newcomers
-- [ZON specification][spec] — formal spec
-- [CLI reference][cli] — command usage and output
+1. Create a feature branch.
+2. Make your changes.
+3. Run `./gradlew test` and confirm everything passes.
+4. Push and open a PR against `main`.
 
-## Modules
+That's it. Welcome!
 
-- [zon-grammar/][zp] — lexer, parser, AST, token definitions
-- [meta-grammar-annotations/][mga] — annotation markers (`@Keyword`, `@Operator`, etc.)
-- [meta-grammar-processors/][mgp] — compile-time code generators
-- [cli/][cli-mod] — command-line interface
+## Project structure
+
+- **zon-grammar/** — ZON lexer, parser, AST, and token definitions
+- **cli/** — main CLI entry point and terminal wrapper
+- **meta-grammar-annotations/** — MetaGrammar annotation definitions
+- **meta-grammar-processors/** — MetaGrammar annotation processors
+- **docs/** — user-facing documentation
 
 <!-- Reference links -->
 
@@ -54,7 +58,3 @@ Docs live in [docs/][docs-root]:
 [guide]: docs/zig-object-notation/guide.md
 [spec]: docs/zig-object-notation/spec.md
 [cli]: docs/cli.md
-[zp]: zon-grammar/
-[mga]: meta-grammar-annotations/
-[mgp]: meta-grammar-processors/
-[cli-mod]: cli/
