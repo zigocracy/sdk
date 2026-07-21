@@ -7,10 +7,18 @@ audience: Users who run the CLI from a terminal
 
 # CLI reference
 
-**Prerequisites:** JDK 25 (Temurin or any compatible distribution).
+> [!IMPORTANT]
+> **Alpha Status:** This project is currently under active development.
+> This document is intended for alpha users, contributors, and early adopters.
 
-For now you build the CLI from source, then run it from the build output.
-(This setup will simplify once the project is further along.)
+## Prerequisites
+
+Before building or running the toolchain, ensure you have the following
+installed:
+* **JDK 25** (Eclipse Temurin or any compatible OpenJDK distribution).
+
+Currently, you must build the CLI from source and run it directly from the
+build output. This process will be streamlined in future releases.
 
 ## Build
 
