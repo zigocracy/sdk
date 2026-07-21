@@ -10,3 +10,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "zigocracy"
+
+include("meta-grammar-annotations")
+include("meta-grammar-processors")
