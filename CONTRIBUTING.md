@@ -20,7 +20,7 @@ audience: Developers who want to build, test, and contribute to the project
 ./gradlew test
 
 # Just the parser
-./gradlew ":zon-parser:test"
+./gradlew ":zon-grammar:test"
 
 # Just the CLI
 ./gradlew ":cli:test"
@@ -43,7 +43,7 @@ Docs live in [docs/][docs-root]:
 
 ## Modules
 
-- [zon-parser/][zp] — lexer, parser, AST, token definitions
+- [zon-grammar/][zp] — lexer, parser, AST, token definitions
 - [meta-grammar-annotations/][mga] — annotation markers (`@Keyword`, `@Operator`, etc.)
 - [meta-grammar-processors/][mgp] — compile-time code generators
 - [cli/][cli-mod] — command-line interface
@@ -54,7 +54,7 @@ Docs live in [docs/][docs-root]:
 [guide]: docs/zig-object-notation/guide.md
 [spec]: docs/zig-object-notation/spec.md
 [cli]: docs/cli.md
-[zp]: zon-parser/
+[zp]: zon-grammar/
 [mga]: meta-grammar-annotations/
 [mgp]: meta-grammar-processors/
 [cli-mod]: cli/

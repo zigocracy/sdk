@@ -13,7 +13,7 @@ rootProject.name = "zigocracy"
 
 include("cli")
 
-include("zon-parser")
+include("zon-grammar")
 
 include("meta-grammar-annotations")
 include("meta-grammar-processors")

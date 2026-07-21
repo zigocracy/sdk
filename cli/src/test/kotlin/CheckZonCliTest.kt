@@ -11,7 +11,7 @@ class CheckZonCliTest {
 
 	@Test
 	fun `all official ZON test files pass when run as a directory`() {
-		val testDir = "zon-parser/src/test/resources/zig-official-zon-test"
+		val testDir = "zon-grammar/src/test/resources/zig-official-zon-test"
 		val cmd = CheckZon()
 		val result = cmd.test(testDir)
 
