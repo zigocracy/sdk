@@ -3,3 +3,5 @@
 gradlew.bat text eol=crlf
 
 *.jar binary
+
+zon-parser/src/test/resources/zig-official-zon-test/** linguist-vendored
