@@ -1,6 +1,29 @@
 package net.landless_city.zigocracy.cli
 
+import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.NoOpCliktCommand
 import com.github.ajalt.clikt.core.main
+import com.github.ajalt.clikt.core.subcommands
+
+public class Zigocracy : NoOpCliktCommand() {
+	override fun help(context: Context): String =
+		"An alternative Zig compiler and toolchain."
+
+	override fun helpEpilog(context: Context): String = """
+		Important: This toolchain is a work in progress and is not yet ready for regular use.
+		This means current commands can change or break at any time without warning.
+
+		If you think you found a bug, you can report it here: 
+		https://github.com/BratishkaErik/zigocracy/issues
+
+		Also, if you want to ask questions, discuss things with others, or give feedback, you are always welcome in our open forum: 
+		https://github.com/BratishkaErik/zigocracy/discussions
+
+		Thank you for trying out Zigocracy. Happy hacking!"""
+		.trimIndent().replace("\n", "\u0085")
+}
 
 public fun main(args: Array<String>) =
-	CheckZon().main(args)
+	Zigocracy()
+		.subcommands(CheckZon())
+		.main(args)

@@ -19,6 +19,8 @@ tasks.test {
 }
 
 application {
+	applicationName = "zigocracy"
+
 	mainClass = "net.landless_city.zigocracy.cli.MainKt"
 	applicationDefaultJvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
 }

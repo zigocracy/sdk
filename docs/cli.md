@@ -13,50 +13,112 @@ audience: Users running the CLI who need to find and apply the right command
 
 ## Prerequisites
 
-Before building or running the toolchain, ensure **JDK 25** (Eclipse Temurin or
-any compatible OpenJDK distribution) is installed.
+Before building or running the toolchain, ensure **JDK 25**
+(Eclipse Temurin or any compatible OpenJDK distribution) is installed.
 
-You must build the CLI from source and run it directly from the build output.
-This will be streamlined in future releases.
+To run the CLI on your machine, you must currently build it from source.
+In the future, a more convenient installation method will be available.
+
+**You will also need a terminal or console (such as bash, zsh, or PowerShell)
+open inside the project's main folder so you can run the commands below.**
 
 ## Build
+
+As the first step, build the CLI from the root directory:
 
 ```shell
 ./gradlew ":cli:installDist"
 ```
 
-After building, the launcher script is at `cli/build/install/cli/bin/cli`
-(or `cli.bat` on Windows).
+After running this command, the `zigocracy` launcher should appear in the
+`cli/build/install/cli/bin/` folder.
+
+Now that the build step is complete, we can prepare the execution environment.
+
+### Configure the command shortcut
+
+We would love to just run the short `zigocracy` command directly, but
+our terminal environment does not know where to find the new executable yet.
+
+Let’s fix this by temporarily registering the `zigocracy` command for
+your current terminal window.
+Don't worry, this change is strictly temporary and
+won't affect any other terminal windows or your global system settings.
+
+If you are on Windows inside PowerShell, run this command:
+```powershell
+Set-Alias -Name zigocracy -Value "${PWD}\cli\build\install\zigocracy\bin\zigocracy.bat"
+```
+
+If you are on Linux or macOS, run this command:
+```shell
+alias zigocracy="${PWD}/cli/build/install/zigocracy/bin/zigocracy"
+```
+
+Now that the shortcut is active, you are ready to run the toolchain.
 
 ## Commands
 
 ### `check-zon`
 
-Validate ZON files and report issues.
+This command checks whether your ZON files are well-formed and
+highlights any syntax errors.
+
+#### Syntax
 
 ```shell
-cli/build/install/cli/bin/cli path/to/file.zon
-cli/build/install/cli/bin/cli path/to/directory
+zigocracy check-zon <paths>...
 ```
 
-**Output**
+#### Examples
+
+Check a single file:
+```shell
+zigocracy check-zon build.zon
+```
+
+Check an entire folder recursively:
+```shell
+zigocracy check-zon ./src
+```
+
+Check multiple files and folders at once:
+```shell
+zigocracy check-zon package.zon build.zon ./internal/config
+```
+
+#### File validation
+
+Here is how a successful syntax check looks:
 
 ```text
-─── bad.zon ───
-  ✗ Expected '}', got ''
-    at line 2, column 1
-
-─── good.zon ───
+─── build.zon ───
   ✓ Valid ZON
-
-─── Summary ───
-  ✓ 3 files: 2 passed, 1 failed
 ```
 
-**Input** — a file path or a directory path. Directories are walked
-recursively for `.zon` files.
+If the parser encounters a syntax error, it points directly to the issue:
 
-**Exit code** — 0 if all files are valid, 1 if any file has errors.
+```text
+─── libs/zap/build.zon ───
+  ✗ Expected '}', got ''
+    at line 12, column 5
+    author = "zig-team"
+    ^── here
+```
 
-**Use when** — you want to check whether a ZON file is well-formed before
-using it in a pipeline or committing changes.
+#### Multi-file summaries
+
+If the command evaluates more than one file, it appends a brief summary
+at the bottom to show the overall results.
+
+```text
+─── Summary ───
+  ✓ 2 files: 1 passed, 1 failed
+```
+
+#### Exit codes
+
+* `0` — Success. The tool validated all files, and found no syntax errors.
+* `1` — Syntax error. One or more files contain broken or invalid ZON syntax.
+* `2` — No files found. Scanned paths contain no `.zon` files to validate.
+
