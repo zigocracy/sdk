@@ -28,7 +28,7 @@ A data format from the Zig ecosystem for configuration and structured data — s
 
 ### Contributing
 
-- **[Contributing guide][contrib]** — build from source and contribute changes — code, documentation, or translations
+- **[Contributing guide][contrib]** — how to start contributing code, documentation, or translations
 
 ## Licensing
 

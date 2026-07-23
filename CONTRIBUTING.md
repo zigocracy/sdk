@@ -1,60 +1,52 @@
 <!--
 style: Microsoft Writing Style Guide
-reason: Zero-to-PR guide — copy-pasteable commands from clone to first pull request.
-doc-type: contributing-guide
-audience: New contributors setting up a dev environment for the first time
+reason: Root contribution hub to direct users to their specialized track without friction.
+doc-type: hub
+audience: Anyone looking to contribute to the Zigocracy project for the first time
 -->
 
-# Contributing
+# Contributing to zigocracy
 
-## 1. Clone
+Welcome! We are glad you are here. No matter which part of the project you
+want to improve, your time and contributions are highly valued.
 
-```shell
-git clone https://github.com/zigocracy/sdk zigocracy-sdk
-cd zigocracy-sdk
-```
+To keep our instructions clear and easy to follow, we have organized our
+workflow into two specialized tracks. Please choose the path that best
+fits what you want to do:
 
-## 2. Build
+* **[Contributing to Code][code]** — Go here if you want to make changes
+  to how the toolchain works.
+* **[Contributing to Documentation][docs]** — Go here if you want to help
+  with the project documentation, guides, or translations.
 
-```shell
-./gradlew build
-```
+Can a change touch both code and documentation?
 
-## 3. Run tests
+Yes, when they are part of the same feature. You are welcome to keep
+connected work in a single pull request — there is no need to split
+your updates into multiple PRs. We review the text together with the
+code it describes, which is easier and faster for everyone.
 
-```shell
-./gradlew test
-```
+#### How code and documentation can connect
 
-If you're iterating on one module, you can run just its tests for a faster loop:
+In the Zigocracy project, a single contribution can include both
+code and documentation updates. You will see this in two common
+scenarios:
 
-```shell
-./gradlew ":zon-grammar:test"   # parser only
-./gradlew ":cli:test"           # CLI only
-```
+* **CLI updates:** A developer adds a new command to the compiler
+  toolchain and updates the matching page in the CLI reference
+  documentation at the same time.
+* **Co-authoring:** You work together with a developer to write or
+  refine a guide for a feature they just built.
 
-Run `./gradlew test` before submitting to make sure everything still passes together.
+Keeping these connected changes together helps us see the complete
+picture. You do not need deep technical knowledge to contribute this
+way. Just take a quick look at both guides and follow their style and
+formatting tips for the parts you touch.
 
-## 4. Submit a pull request
+---
 
-1. Create a feature branch.
-2. Make your changes.
-3. Run `./gradlew test` and confirm everything passes.
-4. Push and open a PR against `main`.
-
-That's it. Welcome!
-
-## Project structure
-
-- **zon-grammar/** — ZON lexer, parser, AST, and token definitions
-- **cli/** — main CLI entry point and terminal wrapper
-- **meta-grammar-annotations/** — MetaGrammar annotation definitions
-- **meta-grammar-processors/** — MetaGrammar annotation processors
-- **docs/** — user-facing documentation
+Thank you for helping shape the future of Zigocracy!
 
 <!-- Reference links -->
-
-[docs-root]: docs/
-[guide]: docs/zig-object-notation/guide.md
-[spec]: docs/zig-object-notation/spec.md
-[cli]: docs/cli.md
+[code]: docs/contributing-to-code.md
+[docs]: docs/contributing-to-docs.md
