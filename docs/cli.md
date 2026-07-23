@@ -22,7 +22,7 @@ In the future, a more convenient installation method will be available.
 **You will also need a terminal or console (such as bash, zsh, or PowerShell)
 open inside the project's main folder so you can run the commands below.**
 
-## Build
+### Build
 
 As the first step, build the CLI from the root directory:
 
@@ -31,7 +31,7 @@ As the first step, build the CLI from the root directory:
 ```
 
 After running this command, the `zigocracy` launcher should appear in the
-`cli/build/install/cli/bin/` folder.
+`cli/build/install/zigocracy/bin/` folder.
 
 Now that the build step is complete, we can prepare the execution environment.
 
