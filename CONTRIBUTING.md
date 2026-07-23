@@ -1,20 +1,61 @@
 <!--
 style: Microsoft Writing Style Guide
-reason: Zero-to-PR guide — copy-pasteable commands from clone to first pull request.
-doc-type: contributing-guide
-audience: New contributors setting up a dev environment for the first time
+reason: Root contribution hub to direct users to their specialized track without friction.
+doc-type: hub
+audience: Anyone looking to contribute to the zigocracy project for the first time
 -->
 
-# Contributing
+# Contributing to zigocracy
 
-## 1. Clone
+Welcome! We are glad you are here. No matter which part of the project you
+want to improve, your time and contributions are highly valued.
+
+To keep our instructions clear and easy to follow, we have organized our
+workflow into two specialized tracks. Please choose the path that best
+fits what you want to do:
+
+* **[Contributing to Code](docs/contributing-to-code.md)** — Go here if
+  you want to make changes to how the toolchain works.
+* **[Contributing to Documentation](docs/contributing-to-docs.md)** — Go here if
+  you want to help with the project documentation, guides, or translations.
+
+Thank you for helping shape the future of zigocracy!
+
+Welcome! We are excited to have you here. To give you the best experience,
+we have separated our guides based on how you want to contribute:
+
+* **Looking to improve our guides or fix typos?** Please jump straight to
+  our [Documentation Guide](docs/contributing.md). You won't
+  need to install any compilers or developer tools!
+* **Looking to hack on the toolchain or core tooling?** You are in the right
+  place. Review the core expectations and setup guide below.
+
+## Core Code Expectations
+
+### 1. The Language
+Even though `zigocracy` serves the Zig ecosystem, the core project is
+written in Kotlin. While you will be writing Kotlin most of the time,
+we rely on Java libraries under the hood, so a basic ability to read Java
+syntax is highly recommended.
+
+### 2. The Build System
+For core development, we use **Gradle** instead of the native `zig build`
+system. You will need a working Java Development Kit (JDK) installed on
+your machine to compile code and run tests.
+
+## Getting Started
+
+If you are ready to get your hands dirty, follow this zero-to-PR guide
+to set up your environment and submit your first change.
+
+## 1. Clone the repository
 
 ```shell
 git clone https://github.com/BratishkaErik/zigocracy
 cd zigocracy
 ```
 
-## 2. Build
+## 2. Build the project
 
 ```shell
 ./gradlew build
