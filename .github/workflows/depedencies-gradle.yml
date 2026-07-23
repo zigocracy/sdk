@@ -2,13 +2,13 @@ name: Gradle Dependency Submission
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions: {}
+permissions: { }
 
 jobs:
   dependency-submission:
