@@ -5,10 +5,30 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.extension
 
+/**
+ * The text span length measured in UTF-16 code units (Java `char`s).
+ */
+public typealias CodeUnits = Int
+
 class SourceFile private constructor(
 	val path: Path,
 	val text: String,
 ) {
+	/**
+	 * The total length of the file content in UTF-16 code units.
+	 */
+	val width: CodeUnits = text.length
+
+	/**
+	 * Extracts a substring from the source code based on starting position and length.
+	 */
+	fun getTextSlice(start: CodeUnits, width: CodeUnits): String {
+		require(start >= 0 && width >= 0 && start + width <= text.length) {
+			"Invalid slice boundaries. Got start: $start, width: $width, but file max width is ${text.length}."
+		}
+		return text.substring(start, start + width)
+	}
+
 	companion object {
 		fun load(path: Path): LoadResult {
 			if (path.extension != "zig") {
