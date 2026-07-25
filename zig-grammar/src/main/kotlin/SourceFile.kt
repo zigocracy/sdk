@@ -3,6 +3,7 @@ package net.landless_city.zigocracy.zig
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.extension
 
 /**
@@ -44,6 +45,14 @@ class SourceFile private constructor(
 			} catch (e: IOException) {
 				return LoadResult.ReadError(path, e)
 			}
+		}
+
+		/**
+		 * Convenience factory for testing. Creates an in-memory [SourceFile]
+		 * without touching the physical disk or checking extensions.
+		 */
+		internal fun forTesting(content: String, fakePath: String = "test.zig"): SourceFile {
+			return SourceFile(Path(fakePath), content)
 		}
 	}
 }
