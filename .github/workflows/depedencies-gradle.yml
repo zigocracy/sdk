@@ -31,3 +31,7 @@ jobs:
 
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+        with:
+          # https://github.com/gradle/actions/issues/202
+          # https://github.com/gradle/github-dependency-graph-gradle-plugin/issues/109
+          additional-arguments: "-Dorg.gradle.isolated-projects=false"
