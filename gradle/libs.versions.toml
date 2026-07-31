@@ -4,6 +4,7 @@ ksp = "2.3.10"
 kotlinpoet = "2.3.0"
 clikt = "5.1.0"
 junit = "6.1.2"
+jazzer-junit = "0.30.0"
 
 [libraries]
 ksp-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
@@ -11,6 +12,7 @@ kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotli
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
 clikt = { group = "com.github.ajalt.clikt", name = "clikt", version.ref = "clikt" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
+jazzer-junit = { group = "com.code-intelligence", name = "jazzer-junit", version.ref = "jazzer-junit" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
