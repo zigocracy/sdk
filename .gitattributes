@@ -5,3 +5,5 @@ gradlew.bat text eol=crlf
 *.jar binary
 
 zon-grammar/src/test/resources/zig-official-zon-test/** linguist-vendored
+
+.cifuzz-corpus/** binary
