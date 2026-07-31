@@ -1,15 +1,10 @@
-package net.landless_city.zigocracy.zig
+package net.landless_city.zigocracy.zig.text
 
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.extension
-
-/**
- * The text span length measured in UTF-16 code units (Java `char`s).
- */
-public typealias CodeUnits = Int
 
 class SourceFile private constructor(
 	val path: Path,
@@ -51,7 +46,7 @@ class SourceFile private constructor(
 		 * Convenience factory for testing. Creates an in-memory [SourceFile]
 		 * without touching the physical disk or checking extensions.
 		 */
-		internal fun forTesting(content: String, fakePath: String = "test.zig"): SourceFile {
+		fun forTesting(content: String, fakePath: String = "test.zig"): SourceFile {
 			return SourceFile(Path(fakePath), content)
 		}
 	}
