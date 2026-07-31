@@ -1,24 +1,24 @@
 package net.landless_city.zigocracy.zig
 
+import net.landless_city.zigocracy.zig.syntax.NodeKind
+import net.landless_city.zigocracy.zig.syntax.SyntaxStreamBuilder
+import net.landless_city.zigocracy.zig.syntax.TokenKind
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class SyntaxStreamTest {
-
-	private val stubFile = SourceFile.forTesting("true")
-
 	@Nested
 	inner class WidthComputation {
 
 		@Test
 		fun `computes exact width for structural nodes`() {
-			val builder = SyntaxStream.Builder(stubFile)
+			val builder = SyntaxStreamBuilder()
 			val rootMark = builder.recordStart()
 			val literalMark = builder.recordStart()
 
-			builder.addToken(TokenKind.KeywordTrue, width = 4)
+			builder.addToken(TokenKind.Identifier, width = 4)
 			builder.emitNode(literalMark, NodeKind.BooleanLiteral)
 			builder.emitNode(rootMark, NodeKind.File)
 
@@ -30,12 +30,11 @@ class SyntaxStreamTest {
 
 		@Test
 		fun `includes whitespace widths in lossless nodes`() {
-			val whitespaceFile = SourceFile.forTesting("true  ")
-			val builder = SyntaxStream.Builder(whitespaceFile)
+			val builder = SyntaxStreamBuilder()
 			val rootMark = builder.recordStart()
 			val literalMark = builder.recordStart()
 
-			builder.addToken(TokenKind.KeywordTrue, width = 4)
+			builder.addToken(TokenKind.Identifier, width = 4)
 			builder.addToken(TokenKind.Whitespace, width = 2)
 			builder.emitNode(literalMark, NodeKind.BooleanLiteral)
 			builder.emitNode(rootMark, NodeKind.File)
@@ -47,13 +46,12 @@ class SyntaxStreamTest {
 
 		@Test
 		fun `computes exact width for structural node containing other structural nodes`() {
-			val file = SourceFile.forTesting("true")
-			val builder = SyntaxStream.Builder(file)
+			val builder = SyntaxStreamBuilder()
 
 			val outerNodeMark = builder.recordStart()
 			val innerNodeMark = builder.recordStart()
 
-			builder.addToken(TokenKind.KeywordTrue, width = 4)
+			builder.addToken(TokenKind.Identifier, width = 4)
 			builder.emitNode(innerNodeMark, NodeKind.BooleanLiteral)
 
 			val anotherInnerMark = builder.recordStart()
@@ -76,11 +74,11 @@ class SyntaxStreamTest {
 
 		@Test
 		fun `nested node markers yield zero width to avoid double counting`() {
-			val builder = SyntaxStream.Builder(stubFile)
+			val builder = SyntaxStreamBuilder()
 			val rootMark = builder.recordStart()
 			val literalMark = builder.recordStart()
 
-			builder.addToken(TokenKind.KeywordTrue, width = 4)
+			builder.addToken(TokenKind.Identifier, width = 4)
 			builder.emitNode(literalMark, NodeKind.BooleanLiteral)
 			builder.emitNode(rootMark, NodeKind.File)
 
@@ -91,8 +89,7 @@ class SyntaxStreamTest {
 
 		@Test
 		fun `handles empty nodes with zero children safely`() {
-			val emptyFile = SourceFile.forTesting("")
-			val builder = SyntaxStream.Builder(emptyFile)
+			val builder = SyntaxStreamBuilder()
 			val rootMark = builder.recordStart()
 
 			builder.emitNode(rootMark, NodeKind.File)
@@ -108,12 +105,12 @@ class SyntaxStreamTest {
 
 		@Test
 		fun `fails lazily when evaluating a mark from the past`() {
-			val builder = SyntaxStream.Builder(stubFile)
+			val builder = SyntaxStreamBuilder()
 			val rootMark = builder.recordStart()
 
-			builder.addToken(TokenKind.KeywordTrue, width = 4)
+			builder.addToken(TokenKind.Identifier, width = 4)
 
-			val corruptedMark = SyntaxStream.Builder.StartMark(startIndex = -1)
+			val corruptedMark = SyntaxStreamBuilder.StartMark(startIndex = -1)
 			builder.emitNode(corruptedMark, NodeKind.BooleanLiteral)
 
 			builder.emitNode(rootMark, NodeKind.File)
@@ -127,11 +124,11 @@ class SyntaxStreamTest {
 
 		@Test
 		fun `fails immediately when completing a mark from the future`() {
-			val builder = SyntaxStream.Builder(stubFile)
+			val builder = SyntaxStreamBuilder()
 
-			builder.addToken(TokenKind.KeywordTrue, width = 4)
+			builder.addToken(TokenKind.Identifier, width = 4)
 
-			val futureMark = SyntaxStream.Builder.StartMark(startIndex = 50)
+			val futureMark = SyntaxStreamBuilder.StartMark(startIndex = 50)
 
 			assertThrows(IllegalArgumentException::class.java) {
 				builder.emitNode(futureMark, NodeKind.BooleanLiteral)

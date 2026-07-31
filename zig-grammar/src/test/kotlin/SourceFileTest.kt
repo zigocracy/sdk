@@ -1,5 +1,7 @@
 package net.landless_city.zigocracy.zig
 
+import net.landless_city.zigocracy.zig.shared.LoadResult
+import net.landless_city.zigocracy.zig.shared.SourceFile
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Nested
