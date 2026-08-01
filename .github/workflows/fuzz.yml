@@ -1,0 +1,59 @@
+name: Continuous Fuzzing
+
+on:
+  push:
+    branches:
+      - '*'
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    name: Run Jazzer Fuzzing
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          java-version: "25"
+          distribution: "temurin"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+
+      - name: Run Fuzz Tests
+        # Run for 1 hour inside CI with 2 parallel processes
+        env:
+          RUNNER_DEBUG: ${{ runner.debug }}
+          JAZZER_FUZZ: 1
+          JAZZER_ARGS: "-fork=2 -max_total_time=3600"
+        run: |
+          ./gradlew :zig-grammar:fuzzTest -Pduration="1h"
+
+      - name: Upload Crash Artifacts
+        # Only upload files if the fuzzing task fails (found a crash)
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: jazzer-crash-reports
+          path: |
+            **/crash-*
+            **/slow-unit-*
+            **/timeout-*
+          if-no-files-found: ignore
+          retention-days: 7
