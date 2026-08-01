@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+	implementation(project(":zig-grammar"))
 	implementation(project(":zon-grammar"))
 	implementation(libs.clikt)
 	testImplementation(libs.junit.jupiter)
