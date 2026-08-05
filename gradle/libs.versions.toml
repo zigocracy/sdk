@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.4.10"
-ksp = "2.3.10"
+ksp = "2.3.11"
 kotlinpoet = "2.3.0"
 clikt = "5.1.0"
 junit = "6.1.2"
