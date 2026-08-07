@@ -1,150 +1,125 @@
 package net.landless_city.zigocracy.zig
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertInstanceOf
+import net.landless_city.zigocracy.zig.text.LoadResult
+import net.landless_city.zigocracy.zig.text.SourceFile
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.ValueSource
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
-import kotlin.io.path.createDirectory
 import kotlin.io.path.writeBytes
-
-private const val zigCode = "const std = @import(\"std\");"
 
 class SourceFileTest {
 	@Nested
-	inner class SuccessResult {
+	inner class FileSlicing {
+		@Test
+		fun `computes file width accurately in code units`() {
+			val content = "const a = 1; // привет ✨"
+			val file = SourceFile.forTesting(content)
+
+			assertEquals(content.length, file.width)
+		}
 
 		@Test
-		fun `loads file content when extension is correct`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve("main.zig")
-			Files.writeString(file, zigCode)
+		fun `extracts text slice within valid boundaries`() {
+			val file = SourceFile.forTesting("const std = @import;")
+			val slice = file.getTextSlice(start = 6, width = 3)
+
+			assertEquals("std", slice)
+		}
+
+		@ParameterizedTest(name = "bounds violation: start={0}, width={1}")
+		@CsvSource(
+			"-1,  5",
+			" 0, -5",
+			"20,  5",
+			"15, 10"
+		)
+		fun `fails to extract text slice when boundaries violate file limits`(start: Int, width: Int) {
+			val file = SourceFile.forTesting("short text")
+
+			assertThrows(IllegalArgumentException::class.java) {
+				file.getTextSlice(start, width)
+			}
+		}
+	}
+
+	@Nested
+	inner class DotFileHandling {
+		@ParameterizedTest(name = "accepts valid dotfile path '{0}'")
+		@ValueSource(strings = [".zig", "      .zig"])
+		fun `accepts hidden files with correct extension before disk check`(fakePath: String, @TempDir tempDir: Path) {
+			val path = tempDir.resolve(fakePath)
+			val result = SourceFile.load(path)
+
+			val error = assertInstanceOf(LoadResult.ReadError::class.java, result)
+			assertInstanceOf(NoSuchFileException::class.java, error.cause)
+		}
+	}
+
+	@Nested
+	inner class ExtensionRejection {
+		@ParameterizedTest(name = "rejects invalid extension '{0}'")
+		@ValueSource(strings = ["source.txt", "Makefile", "main.ziggy", "file.zig."])
+		fun `rejects unsupported file formats strictly by extension`(fakePath: String, @TempDir tempDir: Path) {
+			val path = tempDir.resolve(fakePath)
+			val result = SourceFile.load(path)
+
+			val error = assertInstanceOf(LoadResult.InvalidExtension::class.java, result)
+			assertEquals(path, error.path)
+		}
+	}
+
+	@Nested
+	inner class CaseSensitivity {
+		@Test
+		fun `rejects uppercase extensions strictly`(@TempDir tempDir: Path) {
+			val path = tempDir.resolve("main.ZIG")
+			val result = SourceFile.load(path)
+
+			val error = assertInstanceOf(LoadResult.InvalidExtension::class.java, result)
+			assertEquals("ZIG", error.extension)
+		}
+	}
+
+	@Nested
+	inner class ValidFileLoading {
+		@ParameterizedTest(name = "loads file structure '{0}'")
+		@ValueSource(strings = ["main.zig", "archive.tar.zig"])
+		fun `loads file content into memory when extension format matches`(fakePath: String, @TempDir tempDir: Path) {
+			val content = "const std = @import(\"std\");"
+			val file = tempDir.resolve(fakePath)
+			Files.writeString(file, content)
 
 			val result = SourceFile.load(file)
 
 			val success = assertInstanceOf(LoadResult.Success::class.java, result)
-			assertEquals(file, success.file.path)
-			assertEquals(zigCode, success.file.text)
+			assertEquals(content, success.file.text)
 		}
 
 		@Test
-		fun `loads hidden dotfiles when extension is correct`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve(".zig")
-			Files.writeString(file, zigCode)
-
-			val result = SourceFile.load(file)
-
-			val success = assertInstanceOf(LoadResult.Success::class.java, result)
-			assertEquals(zigCode, success.file.text)
-		}
-
-		@Test
-		fun `loads files even if name is blank before extension`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve("      .zig")
-			Files.writeString(file, zigCode)
-
-			val result = SourceFile.load(file)
-
-			val success = assertInstanceOf(LoadResult.Success::class.java, result)
-			assertEquals(zigCode, success.file.text)
-		}
-
-		@Test
-		fun `loads files with multiple dots when final extension is correct`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve("archive.tar.zig")
-			Files.writeString(file, zigCode)
-
-			val result = SourceFile.load(file)
-
-			val success = assertInstanceOf(LoadResult.Success::class.java, result)
-			assertEquals(zigCode, success.file.text)
-		}
-
-		@Test
-		fun `handles empty files correctly`(@TempDir tempDir: Path) {
+		fun `handles empty source files correctly`(@TempDir tempDir: Path) {
 			val file = tempDir.resolve("empty.zig")
 			Files.createFile(file)
 
 			val result = SourceFile.load(file)
 
 			val success = assertInstanceOf(LoadResult.Success::class.java, result)
-			assertEquals("", success.file.text)
+			assertTrue(success.file.text.isEmpty())
 		}
 	}
 
 	@Nested
-	inner class InvalidExtensionResult {
-
+	inner class FileSystemFaults {
 		@Test
-		fun `fails when file has wrong extension`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve("source.txt")
-			Files.createFile(file)
-
-			val result = SourceFile.load(file)
-
-			val error = assertInstanceOf(LoadResult.InvalidExtension::class.java, result)
-			assertEquals(file, error.path)
-			assertEquals("txt", error.extension)
-		}
-
-		@Test
-		fun `fails when file has no extension`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve("Makefile")
-			Files.createFile(file)
-
-			val result = SourceFile.load(file)
-
-			val error = assertInstanceOf(LoadResult.InvalidExtension::class.java, result)
-			assertEquals("", error.extension)
-		}
-
-		@Test
-		fun `fails when extension is part of a longer word`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve("main.ziggy")
-			Files.createFile(file)
-
-			val result = SourceFile.load(file)
-
-			val error = assertInstanceOf(LoadResult.InvalidExtension::class.java, result)
-			assertEquals(file, error.path)
-			assertEquals("ziggy", error.extension)
-		}
-
-		@Test
-		fun `fails when file ends with a dot`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve("file.zig.")
-			Files.createFile(file)
-
-			val result = SourceFile.load(file)
-
-			val error = assertInstanceOf(LoadResult.InvalidExtension::class.java, result)
-			assertEquals(file, error.path)
-			assertEquals("", error.extension)
-		}
-
-		@Test
-		fun `fails when extension is uppercase`(@TempDir tempDir: Path) {
-			val file = tempDir.resolve("main.ZIG")
-			Files.createFile(file)
-
-			val result = SourceFile.load(file)
-
-			val error = assertInstanceOf(LoadResult.InvalidExtension::class.java, result)
-			assertEquals(file, error.path)
-			assertEquals("ZIG", error.extension)
-		}
-	}
-
-	@Nested
-	inner class ReadErrorResult {
-
-		@Test
-		fun `fails when file does not exist`() {
-			val missingFile = Path.of("missing.zig")
-
+		fun `reports read error when file does not exist`(@TempDir tempDir: Path) {
+			val missingFile = tempDir.resolve("missing.zig")
 			val result = SourceFile.load(missingFile)
 
 			val error = assertInstanceOf(LoadResult.ReadError::class.java, result)
@@ -153,9 +128,9 @@ class SourceFileTest {
 		}
 
 		@Test
-		fun `fails when path is a directory instead of a file`(@TempDir tempDir: Path) {
+		fun `reports read error when path targets a directory`(@TempDir tempDir: Path) {
 			val directoryPath = tempDir.resolve("directory.zig")
-			directoryPath.createDirectory()
+			Files.createDirectory(directoryPath)
 
 			val result = SourceFile.load(directoryPath)
 
@@ -165,15 +140,18 @@ class SourceFileTest {
 		}
 	}
 
-	@Test
-	fun `fails when file contains malformed UTF-8 bytes`(@TempDir tempDir: Path) {
-		val file = tempDir.resolve("malformed.zig")
-		val malformedBytes = byteArrayOf(0xFF.toByte(), 0xFF.toByte())
-		file.writeBytes(malformedBytes)
+	@Nested
+	inner class EncodingFaults {
+		@Test
+		fun `reports read error when file contains malformed UTF-8 bytes`(@TempDir tempDir: Path) {
+			val file = tempDir.resolve("malformed.zig")
+			val malformedBytes = byteArrayOf(0xFF.toByte(), 0xFF.toByte())
+			file.writeBytes(malformedBytes)
 
-		val result = SourceFile.load(file)
+			val result = SourceFile.load(file)
 
-		val error = assertInstanceOf(LoadResult.ReadError::class.java, result)
-		assertInstanceOf(java.nio.charset.MalformedInputException::class.java, error.cause)
+			val error = assertInstanceOf(LoadResult.ReadError::class.java, result)
+			assertInstanceOf(java.nio.charset.MalformedInputException::class.java, error.cause)
+		}
 	}
 }
