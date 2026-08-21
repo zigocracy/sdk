@@ -27,6 +27,8 @@ import net.landless_city.zigocracy.zig.text.CodeUnits
  * Within this single sequence, terminal tokens act as leaves and flow in their natural,
  * left-to-right reading order. Structural nodes act as parent containers that wrap around
  * these leaves.
+ *
+ * @see SyntaxStreamVisitor
  */
 class SyntaxStream(
 	val events: List<SyntaxEvent>,
