@@ -7,6 +7,7 @@ dependencies {
 	implementation(project(":zig-grammar"))
 	implementation(project(":zon-grammar"))
 	implementation(libs.clikt)
+	implementation(libs.mordant)
 	testImplementation(libs.junit.jupiter)
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

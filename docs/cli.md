@@ -122,3 +122,41 @@ at the bottom to show the overall results.
 * `1` — Syntax error. One or more files contain broken or invalid ZON syntax.
 * `2` — No files found. Scanned paths contain no `.zon` files to validate.
 
+### `highlight-syntax`
+
+Print Zig source files with full syntax highlighting like a cat tool.
+
+#### Syntax
+
+```shell
+zigocracy highlight-syntax [OPTIONS] <paths>...
+```
+
+#### Options
+
+* `--theme` — Specify terminal visual scheme preference (`light` or `dark`). Default: `dark`.
+
+#### Examples
+
+Highlight a single file:
+
+```shell
+zigocracy highlight-syntax main.zig
+```
+
+Highlight multiple files and directories at once:
+
+```shell
+zigocracy highlight-syntax src/ math.zig build.zig
+```
+
+Force a specific theme configuration:
+
+```shell
+zigocracy highlight-syntax --theme=light main.zig
+```
+
+#### Exit codes
+
+* `0` — Success. The tool processed and printed all specified Zig files.
+* `2` — No files found. Scanned paths contain no `.zig` files to process.

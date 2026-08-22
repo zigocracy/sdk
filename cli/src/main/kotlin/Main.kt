@@ -25,5 +25,5 @@ public class Zigocracy : NoOpCliktCommand() {
 
 public fun main(args: Array<String>) =
 	Zigocracy()
-		.subcommands(CheckZon())
+		.subcommands(CheckZon(), HighlightSyntaxCommand())
 		.main(args)
