@@ -9,6 +9,7 @@ import kotlin.io.path.extension
 class SourceFile private constructor(
 	val path: Path,
 	val text: String,
+	val lineMap: LineMap,
 ) {
 	/**
 	 * The total length of the file content in UTF-16 code units.
@@ -34,8 +35,9 @@ class SourceFile private constructor(
 			try {
 				val canonicalPath = path.toAbsolutePath().normalize()
 				val text = Files.readString(canonicalPath)
+				val lineMap = LineMap.buildFor(text)
 
-				val sourceFile = SourceFile(canonicalPath, text)
+				val sourceFile = SourceFile(canonicalPath, text, lineMap)
 				return LoadResult.Success(sourceFile)
 			} catch (e: IOException) {
 				return LoadResult.ReadError(path, e)
@@ -47,7 +49,7 @@ class SourceFile private constructor(
 		 * without touching the physical disk or checking extensions.
 		 */
 		fun forTesting(content: String, fakePath: String = "test.zig"): SourceFile {
-			return SourceFile(Path(fakePath), content)
+			return SourceFile(Path(fakePath), content, LineMap.buildFor(content))
 		}
 	}
 }

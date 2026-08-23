@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.cli.highlight_syntax
+package net.landless_city.zigocracy.cli.syntax_highlight
 
 import com.github.ajalt.mordant.rendering.TextStyle
 import net.landless_city.zigocracy.zig.shared.DiagnosticCode
