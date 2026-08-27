@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.grammar.annotations
+package com.zigocracy.sdk.grammar.annotations
 
 /**
  * Marks a token type as an operator with a fixed symbolic representation.

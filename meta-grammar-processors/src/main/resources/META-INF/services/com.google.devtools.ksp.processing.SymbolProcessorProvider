@@ -1,1 +1,1 @@
-net.landless_city.zigocracy.processor.GrammarResolverProvider
+com.zigocracy.sdk.processor.GrammarResolverProvider

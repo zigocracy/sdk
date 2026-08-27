@@ -10,8 +10,8 @@ audience: New contributors setting up a dev environment for the first time
 ## 1. Clone
 
 ```shell
-git clone https://github.com/BratishkaErik/zigocracy
-cd zigocracy
+git clone https://github.com/zigocracy/sdk zigocracy-sdk
+cd zigocracy-sdk
 ```
 
 ## 2. Build

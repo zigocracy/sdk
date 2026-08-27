@@ -1,6 +1,6 @@
-package net.landless_city.zigocracy.zig.lexer
+package com.zigocracy.sdk.zig.lexer
 
-import net.landless_city.zigocracy.zig.text.TextStream
+import com.zigocracy.sdk.zig.text.TextStream
 
 /**
  * An LL(k) buffer that provides token lookahead capabilities over a text stream.

@@ -1,14 +1,14 @@
-package net.landless_city.zigocracy.cli.syntax_highlight
+package com.zigocracy.sdk.cli.syntax_highlight
 
 import com.github.ajalt.mordant.rendering.TextColors.Companion.rgb
 import com.github.ajalt.mordant.rendering.TextStyle
 import com.github.ajalt.mordant.rendering.TextStyles.bold
 import com.github.ajalt.mordant.rendering.TextStyles.underline
-import net.landless_city.zigocracy.zig.shared.DiagnosticCode
-import net.landless_city.zigocracy.zig.shared.DiagnosticSeverity
-import net.landless_city.zigocracy.zig.syntax.TokenKind
-import net.landless_city.zigocracy.zig.syntax.VisualGroup
-import net.landless_city.zigocracy.zig.syntax.classifyToVisualGroup
+import com.zigocracy.sdk.zig.shared.DiagnosticCode
+import com.zigocracy.sdk.zig.shared.DiagnosticSeverity
+import com.zigocracy.sdk.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.syntax.VisualGroup
+import com.zigocracy.sdk.zig.syntax.classifyToVisualGroup
 
 internal object LightSyntaxHighlightTheme : SyntaxHighlightTheme {
 	override fun getSyntaxStyle(kind: TokenKind): TextStyle = when (kind.classifyToVisualGroup()) {

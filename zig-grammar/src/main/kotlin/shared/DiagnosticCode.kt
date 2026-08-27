@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zig.shared
+package com.zigocracy.sdk.zig.shared
 
 sealed interface DiagnosticCode {
 	val severity: DiagnosticSeverity

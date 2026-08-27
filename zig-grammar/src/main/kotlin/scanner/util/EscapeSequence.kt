@@ -1,9 +1,9 @@
-package net.landless_city.zigocracy.zig.scanner.util
+package com.zigocracy.sdk.zig.scanner.util
 
-import net.landless_city.zigocracy.zig.scanner.ScanDiagnostics
-import net.landless_city.zigocracy.zig.shared.DiagnosticCode
-import net.landless_city.zigocracy.zig.text.CodeUnits
-import net.landless_city.zigocracy.zig.text.TextReader
+import com.zigocracy.sdk.zig.scanner.ScanDiagnostics
+import com.zigocracy.sdk.zig.shared.DiagnosticCode
+import com.zigocracy.sdk.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.text.TextReader
 
 internal object EscapeSequence {
 

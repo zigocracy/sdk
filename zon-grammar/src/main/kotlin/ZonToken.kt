@@ -1,6 +1,6 @@
-package net.landless_city.zigocracy.zon
+package com.zigocracy.sdk.zon
 
-import net.landless_city.zigocracy.grammar.annotations.*
+import com.zigocracy.sdk.grammar.annotations.*
 
 /**
  * Operator precedence constants for expression parsing.

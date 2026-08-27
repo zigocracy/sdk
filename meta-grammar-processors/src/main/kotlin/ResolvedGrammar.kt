@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.processor
+package com.zigocracy.sdk.processor
 
 import com.squareup.kotlinpoet.ClassName
-import net.landless_city.zigocracy.grammar.annotations.Associativity
+import com.zigocracy.sdk.grammar.annotations.Associativity
 
 /**
  * The fully resolved grammar of the language, extracted from annotations at compile time.

@@ -1,13 +1,13 @@
-package net.landless_city.zigocracy.processor.emitters
+package com.zigocracy.sdk.processor.emitters
 
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.writeTo
-import net.landless_city.zigocracy.grammar.annotations.Associativity
-import net.landless_city.zigocracy.processor.GrammarEmitter
-import net.landless_city.zigocracy.processor.ResolvedGrammar
+import com.zigocracy.sdk.grammar.annotations.Associativity
+import com.zigocracy.sdk.processor.GrammarEmitter
+import com.zigocracy.sdk.processor.ResolvedGrammar
 
 /**
  * Emits `GeneratedParserRegistry`: lookup tables for prefix, suffix, and infix

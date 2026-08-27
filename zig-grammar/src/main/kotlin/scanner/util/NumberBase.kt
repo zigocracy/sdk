@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.zig.scanner.util
+package com.zigocracy.sdk.zig.scanner.util
 
-import net.landless_city.zigocracy.zig.text.CodeUnits
-import net.landless_city.zigocracy.zig.text.TextReader
+import com.zigocracy.sdk.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.text.TextReader
 
 internal enum class NumberBase(val radix: Int) {
 	Binary(radix = 2) {

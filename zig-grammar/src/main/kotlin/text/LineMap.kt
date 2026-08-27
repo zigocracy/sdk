@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zig.text
+package com.zigocracy.sdk.zig.text
 
 class LineMap private constructor(
 	private val lineStarts: IntArray,

@@ -1,12 +1,12 @@
-package net.landless_city.zigocracy.zig.scanner.impl
+package com.zigocracy.sdk.zig.scanner.impl
 
-import net.landless_city.zigocracy.zig.scanner.ScanDiagnostics
-import net.landless_city.zigocracy.zig.scanner.ScanResult
-import net.landless_city.zigocracy.zig.scanner.Scanner
-import net.landless_city.zigocracy.zig.scanner.util.isZigUserIdentifierPart
-import net.landless_city.zigocracy.zig.scanner.util.isZigUserIdentifierStart
-import net.landless_city.zigocracy.zig.syntax.TokenKind
-import net.landless_city.zigocracy.zig.text.TextReader
+import com.zigocracy.sdk.zig.scanner.ScanDiagnostics
+import com.zigocracy.sdk.zig.scanner.ScanResult
+import com.zigocracy.sdk.zig.scanner.Scanner
+import com.zigocracy.sdk.zig.scanner.util.isZigUserIdentifierPart
+import com.zigocracy.sdk.zig.scanner.util.isZigUserIdentifierStart
+import com.zigocracy.sdk.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.text.TextReader
 
 internal object IdentifierScanner : Scanner {
 	private val reservedTokens: Map<String, TokenKind> = mapOf(

@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.processor
+package com.zigocracy.sdk.processor
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType

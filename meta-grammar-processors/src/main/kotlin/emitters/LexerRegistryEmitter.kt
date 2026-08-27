@@ -1,13 +1,13 @@
-package net.landless_city.zigocracy.processor.emitters
+package com.zigocracy.sdk.processor.emitters
 
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.writeTo
-import net.landless_city.zigocracy.processor.GrammarEmitter
-import net.landless_city.zigocracy.processor.ResolvedGrammar
-import net.landless_city.zigocracy.processor.ResolvedToken
+import com.zigocracy.sdk.processor.GrammarEmitter
+import com.zigocracy.sdk.processor.ResolvedGrammar
+import com.zigocracy.sdk.processor.ResolvedToken
 
 /**
  * Emits `GeneratedLexerRegistry`: a bidirectional map between symbol strings
@@ -16,7 +16,7 @@ import net.landless_city.zigocracy.processor.ResolvedToken
  * The registry is ordered by symbol length (longest first) then lexicographically,
  * which enables greedy longest-match scanning in the lexer.
  *
- * This emitter consumes the shared [net.landless_city.zigocracy.processor.ResolvedGrammar]
+ * This emitter consumes the shared [com.zigocracy.sdk.processor.ResolvedGrammar]
  * instead of walking KSP annotations itself.
  */
 public class LexerRegistryEmitter(

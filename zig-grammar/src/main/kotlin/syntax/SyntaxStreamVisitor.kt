@@ -1,6 +1,6 @@
-package net.landless_city.zigocracy.zig.syntax
+package com.zigocracy.sdk.zig.syntax
 
-import net.landless_city.zigocracy.zig.lexer.TokenDiagnostic
+import com.zigocracy.sdk.zig.lexer.TokenDiagnostic
 
 /**
  * A visitor for processing a syntax stream in its logical order.

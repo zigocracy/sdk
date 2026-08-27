@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.zig
+package com.zigocracy.sdk.zig
 
-import net.landless_city.zigocracy.zig.text.LoadResult
-import net.landless_city.zigocracy.zig.text.SourceFile
+import com.zigocracy.sdk.zig.text.LoadResult
+import com.zigocracy.sdk.zig.text.SourceFile
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

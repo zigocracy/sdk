@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zig.text
+package com.zigocracy.sdk.zig.text
 
 /**
  * The text span length measured in UTF-16 code units (Java `char`s).

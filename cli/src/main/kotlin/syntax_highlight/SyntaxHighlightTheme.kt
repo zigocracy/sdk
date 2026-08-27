@@ -1,8 +1,8 @@
-package net.landless_city.zigocracy.cli.syntax_highlight
+package com.zigocracy.sdk.cli.syntax_highlight
 
 import com.github.ajalt.mordant.rendering.TextStyle
-import net.landless_city.zigocracy.zig.shared.DiagnosticCode
-import net.landless_city.zigocracy.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.shared.DiagnosticCode
+import com.zigocracy.sdk.zig.syntax.TokenKind
 
 internal interface SyntaxHighlightTheme {
 	fun getSyntaxStyle(kind: TokenKind): TextStyle

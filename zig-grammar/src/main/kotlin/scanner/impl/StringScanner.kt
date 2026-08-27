@@ -1,16 +1,16 @@
-package net.landless_city.zigocracy.zig.scanner.impl
+package com.zigocracy.sdk.zig.scanner.impl
 
-import net.landless_city.zigocracy.zig.scanner.ScanDiagnostics
-import net.landless_city.zigocracy.zig.scanner.ScanResult
-import net.landless_city.zigocracy.zig.scanner.Scanner
-import net.landless_city.zigocracy.zig.scanner.util.EscapeSequence
-import net.landless_city.zigocracy.zig.scanner.util.RecoveryContext
-import net.landless_city.zigocracy.zig.scanner.util.isZigHorizontalWhitespace
-import net.landless_city.zigocracy.zig.scanner.util.isZigVerticalWhitespace
-import net.landless_city.zigocracy.zig.shared.DiagnosticCode
-import net.landless_city.zigocracy.zig.syntax.TokenKind
-import net.landless_city.zigocracy.zig.text.CodeUnits
-import net.landless_city.zigocracy.zig.text.TextReader
+import com.zigocracy.sdk.zig.scanner.ScanDiagnostics
+import com.zigocracy.sdk.zig.scanner.ScanResult
+import com.zigocracy.sdk.zig.scanner.Scanner
+import com.zigocracy.sdk.zig.scanner.util.EscapeSequence
+import com.zigocracy.sdk.zig.scanner.util.RecoveryContext
+import com.zigocracy.sdk.zig.scanner.util.isZigHorizontalWhitespace
+import com.zigocracy.sdk.zig.scanner.util.isZigVerticalWhitespace
+import com.zigocracy.sdk.zig.shared.DiagnosticCode
+import com.zigocracy.sdk.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.text.TextReader
 
 internal object StringScanner : Scanner {
 	override fun scan(reader: TextReader): ScanResult {

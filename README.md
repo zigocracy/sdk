@@ -5,9 +5,9 @@ doc-type: landing-page
 audience: Anyone reading the project home page
 -->
 
-# zigocracy
+# Zigocracy
 
-zigocracy is an alternative Zig compiler and toolchain. It explores interactive
+Zigocracy is an alternative Zig compiler and toolchain. It explores interactive
 compile-time evaluation and customizable language tooling.
 
 The project is in active development. Everything you see here is an early

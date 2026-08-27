@@ -1,6 +1,6 @@
-package net.landless_city.zigocracy.zig.scanner
+package com.zigocracy.sdk.zig.scanner
 
-import net.landless_city.zigocracy.zig.text.TextReader
+import com.zigocracy.sdk.zig.text.TextReader
 
 /**
  * Internal contract for single-token lexical analyzers.

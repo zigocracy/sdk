@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.zig.scanner
+package com.zigocracy.sdk.zig.scanner
 
-import net.landless_city.zigocracy.zig.syntax.TokenKind
-import net.landless_city.zigocracy.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.text.CodeUnits
 
 /**
  * The internal outcome of a low-level token scan operation.

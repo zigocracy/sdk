@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.zig.text.impl
+package com.zigocracy.sdk.zig.text.impl
 
-import net.landless_city.zigocracy.zig.text.CodeUnits
-import net.landless_city.zigocracy.zig.text.TextStream
+import com.zigocracy.sdk.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.text.TextStream
 
 /**
  * A safe, mutable text stream implementation backed directly by a raw [String].

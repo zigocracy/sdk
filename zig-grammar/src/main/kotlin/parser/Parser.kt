@@ -1,10 +1,10 @@
-package net.landless_city.zigocracy.zig.parser
+package com.zigocracy.sdk.zig.parser
 
-import net.landless_city.zigocracy.zig.lexer.LookaheadTokenReader
-import net.landless_city.zigocracy.zig.syntax.NodeKind
-import net.landless_city.zigocracy.zig.syntax.SyntaxStreamBuilder
-import net.landless_city.zigocracy.zig.text.SourceFile
-import net.landless_city.zigocracy.zig.text.impl.SourceFileTextStream
+import com.zigocracy.sdk.zig.lexer.LookaheadTokenReader
+import com.zigocracy.sdk.zig.syntax.NodeKind
+import com.zigocracy.sdk.zig.syntax.SyntaxStreamBuilder
+import com.zigocracy.sdk.zig.text.SourceFile
+import com.zigocracy.sdk.zig.text.impl.SourceFileTextStream
 
 object Parser {
 	/**

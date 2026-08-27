@@ -1,11 +1,11 @@
-package net.landless_city.zigocracy.zig.lexer
+package com.zigocracy.sdk.zig.lexer
 
-import net.landless_city.zigocracy.zig.scanner.ScanDiagnostics
-import net.landless_city.zigocracy.zig.scanner.ScanResult
-import net.landless_city.zigocracy.zig.scanner.impl.*
-import net.landless_city.zigocracy.zig.syntax.TokenEvent
-import net.landless_city.zigocracy.zig.syntax.TokenKind
-import net.landless_city.zigocracy.zig.text.TextReader
+import com.zigocracy.sdk.zig.scanner.ScanDiagnostics
+import com.zigocracy.sdk.zig.scanner.ScanResult
+import com.zigocracy.sdk.zig.scanner.impl.*
+import com.zigocracy.sdk.zig.syntax.TokenEvent
+import com.zigocracy.sdk.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.text.TextReader
 
 /**
  * A stateless tokenizer that classifies character sequences into lexical tokens.

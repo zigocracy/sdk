@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zon
+package com.zigocracy.sdk.zon
 
 import language.syntax.GeneratedLexerRegistry
 

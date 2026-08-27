@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zig.text
+package com.zigocracy.sdk.zig.text
 
 /**
  * A mutable text stream that tracks and advances the current reading position.

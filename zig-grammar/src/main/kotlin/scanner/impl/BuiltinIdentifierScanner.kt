@@ -1,11 +1,11 @@
-package net.landless_city.zigocracy.zig.scanner.impl
+package com.zigocracy.sdk.zig.scanner.impl
 
-import net.landless_city.zigocracy.zig.scanner.ScanResult
-import net.landless_city.zigocracy.zig.scanner.Scanner
-import net.landless_city.zigocracy.zig.scanner.util.isZigBuiltinIdentifierPart
-import net.landless_city.zigocracy.zig.scanner.util.isZigBuiltinIdentifierStart
-import net.landless_city.zigocracy.zig.syntax.TokenKind
-import net.landless_city.zigocracy.zig.text.TextReader
+import com.zigocracy.sdk.zig.scanner.ScanResult
+import com.zigocracy.sdk.zig.scanner.Scanner
+import com.zigocracy.sdk.zig.scanner.util.isZigBuiltinIdentifierPart
+import com.zigocracy.sdk.zig.scanner.util.isZigBuiltinIdentifierStart
+import com.zigocracy.sdk.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.text.TextReader
 
 internal object BuiltinIdentifierScanner : Scanner {
 	override fun scan(reader: TextReader): ScanResult {

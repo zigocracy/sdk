@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.processor
+package com.zigocracy.sdk.processor
 
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
@@ -7,7 +7,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ksp.toClassName
-import net.landless_city.zigocracy.grammar.annotations.*
+import com.zigocracy.sdk.grammar.annotations.*
 
 /**
  * The single KSP [SymbolProcessor] that resolves all grammar annotations into a

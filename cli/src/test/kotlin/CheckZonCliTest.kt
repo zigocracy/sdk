@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.cli
+package com.zigocracy.sdk.cli
 
 import com.github.ajalt.clikt.testing.test
 import org.junit.jupiter.api.Assertions.assertEquals

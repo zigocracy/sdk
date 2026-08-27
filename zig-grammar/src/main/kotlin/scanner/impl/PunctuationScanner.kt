@@ -1,9 +1,9 @@
-package net.landless_city.zigocracy.zig.scanner.impl
+package com.zigocracy.sdk.zig.scanner.impl
 
-import net.landless_city.zigocracy.zig.scanner.ScanResult
-import net.landless_city.zigocracy.zig.scanner.Scanner
-import net.landless_city.zigocracy.zig.syntax.TokenKind
-import net.landless_city.zigocracy.zig.text.TextReader
+import com.zigocracy.sdk.zig.scanner.ScanResult
+import com.zigocracy.sdk.zig.scanner.Scanner
+import com.zigocracy.sdk.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.text.TextReader
 
 /**
  * A fast, fixed-window scanner implementing the Maximal Munch (longest match) principle

@@ -33,7 +33,7 @@
  * @see Suffix
  * @see Associativity
  */
-package net.landless_city.zigocracy.grammar.annotations
+package com.zigocracy.sdk.grammar.annotations
 
 /**
  * Marks a token as usable in prefix position during expression parsing.
