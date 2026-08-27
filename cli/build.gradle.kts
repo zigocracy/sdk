@@ -6,6 +6,7 @@ plugins {
 dependencies {
 	implementation(project(":zig-grammar"))
 	implementation(project(":zon-grammar"))
+	implementation(project(":lsp-server"))
 	implementation(libs.clikt)
 	implementation(libs.mordant)
 	testImplementation(libs.junit.jupiter)
