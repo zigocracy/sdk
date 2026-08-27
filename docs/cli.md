@@ -207,3 +207,84 @@ zigocracy check-syntax --error-style=rich-5 src/
 * `0` — Success. All analyzed files are syntactically correct.
 * `1` — Syntax error. One or more files contain invalid syntax or failed processing.
 * `2` — No files found. Scanned paths contain no `.zig` files to process.
+
+### `lsp-server`
+
+Start the Language Server Protocol (LSP) server for IDE and text editor integration.
+
+This server acts as the brains behind your development environment. It runs in the
+background and talks directly to your IDE or editor to provide smart features like
+code autocompletion, real-time error highlighting, and instant code navigation.
+
+> [!NOTE]
+> Usually, an editor plugin with Zigocracy support will launch and manage this
+> server automatically. You can run this command to set up the connection
+> manually if a compatible plugin is not available, or if your preferred
+> editor requires manual LSP configuration.
+
+> [!IMPORTANT]
+> Because integration plugins do not exist yet, this manual connection is
+> currently the only way to use the server.
+
+#### Syntax
+
+```shell
+zigocracy lsp-server [OPTIONS]
+```
+
+#### Options
+
+##### Server Options
+
+* `--port=<PORT>` — Port to listen on via TCP. If omitted, standard I/O (stdio) transport is used.
+
+##### Debugging Options
+
+* `--validate` — Enable strict validation of incoming messages.
+* `--trace` — Log raw server traffic to help troubleshoot integration issues.
+
+#### Examples
+
+Start the server using standard I/O (stdio) transport:
+
+```shell
+zigocracy lsp-server
+```
+
+Start the server using TCP transport listening on a specific port:
+
+```shell
+zigocracy lsp-server --port 5444
+```
+
+Start debug server, using TCP transport, with strict validation and full traffic logging:
+
+```shell
+zigocracy lsp-server --port 5444 --trace --validate
+```
+
+#### Server logs
+
+Here is what you will see in the terminal when launching the server in `stdio` mode
+(this mode uses text input and output to talk to your editor):
+
+```text
+Starting LSP server via standard I/O (stdio)...
+LSP server is actively listening for stdio messages.
+```
+
+When you start the server using TCP, it explicitly states that it is waiting for a client connection. The session activates as soon as the IDE or text editor connects:
+
+```text
+Starting LSP server on TCP port 5444 (waiting for client connection...)
+Client connected from /127.0.0.1:53241
+LSP session established. Processing client requests...
+```
+
+#### Exit codes
+
+#### Exit codes
+
+* `0` — Success. The server stopped cleanly after the editor ended the session.
+* `1` — Startup or connection error. The server failed to bind to the port, lost connection, or the protocol sequence was broken.
+* `2` — Internal crash. The server engine encountered an unexpected runtime failure or failed to process messages.
