@@ -1,6 +1,6 @@
-package net.landless_city.zigocracy.zon
+package com.zigocracy.sdk.zon
 
-import net.landless_city.zigocracy.zon.ZonAstNode.*
+import com.zigocracy.sdk.zon.ZonAstNode.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Test

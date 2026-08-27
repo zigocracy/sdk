@@ -1,20 +1,20 @@
-package net.landless_city.zigocracy.cli.diagnostics
+package com.zigocracy.sdk.cli.diagnostics
 
 import com.github.ajalt.mordant.rendering.TextColors.*
 import com.github.ajalt.mordant.rendering.TextStyles.bold
 import com.github.ajalt.mordant.rendering.TextStyles.reset
 import com.github.ajalt.mordant.terminal.Terminal
-import net.landless_city.zigocracy.cli.syntax_highlight.SyntaxHighlightTheme
-import net.landless_city.zigocracy.cli.syntax_highlight.TokenStyleApplier
-import net.landless_city.zigocracy.zig.cli.EnglishDiagnosticLocalizer
-import net.landless_city.zigocracy.zig.lexer.TokenDiagnostic
-import net.landless_city.zigocracy.zig.parser.ParserResult
-import net.landless_city.zigocracy.zig.shared.DiagnosticCode
-import net.landless_city.zigocracy.zig.shared.DiagnosticSeverity
-import net.landless_city.zigocracy.zig.syntax.NodeEvent
-import net.landless_city.zigocracy.zig.syntax.SyntaxStreamVisitor
-import net.landless_city.zigocracy.zig.syntax.TokenEvent
-import net.landless_city.zigocracy.zig.text.LineMap
+import com.zigocracy.sdk.cli.EnglishDiagnosticLocalizer
+import com.zigocracy.sdk.cli.syntax_highlight.SyntaxHighlightTheme
+import com.zigocracy.sdk.cli.syntax_highlight.TokenStyleApplier
+import com.zigocracy.sdk.zig.lexer.TokenDiagnostic
+import com.zigocracy.sdk.zig.parser.ParserResult
+import com.zigocracy.sdk.zig.shared.DiagnosticCode
+import com.zigocracy.sdk.zig.shared.DiagnosticSeverity
+import com.zigocracy.sdk.zig.syntax.NodeEvent
+import com.zigocracy.sdk.zig.syntax.SyntaxStreamVisitor
+import com.zigocracy.sdk.zig.syntax.TokenEvent
+import com.zigocracy.sdk.zig.text.LineMap
 import java.nio.file.Path
 
 internal abstract class BaseDiagnosticsPrinter(

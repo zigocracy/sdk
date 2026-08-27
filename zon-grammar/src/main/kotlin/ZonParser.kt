@@ -1,6 +1,6 @@
-package net.landless_city.zigocracy.zon
+package com.zigocracy.sdk.zon
 
-import net.landless_city.zigocracy.zon.ZonAstNode.*
+import com.zigocracy.sdk.zon.ZonAstNode.*
 import java.math.BigDecimal
 import java.math.BigInteger
 

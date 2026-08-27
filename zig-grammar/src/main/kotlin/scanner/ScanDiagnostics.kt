@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.zig.scanner
+package com.zigocracy.sdk.zig.scanner
 
-import net.landless_city.zigocracy.zig.shared.DiagnosticCode
-import net.landless_city.zigocracy.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.shared.DiagnosticCode
+import com.zigocracy.sdk.zig.text.CodeUnits
 
 /**
  * A local syntax failure captured during a single scanner pass.

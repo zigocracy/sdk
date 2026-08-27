@@ -1,8 +1,8 @@
-package net.landless_city.zigocracy.zig.text.impl
+package com.zigocracy.sdk.zig.text.impl
 
-import net.landless_city.zigocracy.zig.text.CodeUnits
-import net.landless_city.zigocracy.zig.text.SourceFile
-import net.landless_city.zigocracy.zig.text.TextStream
+import com.zigocracy.sdk.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.text.SourceFile
+import com.zigocracy.sdk.zig.text.TextStream
 
 /**
  * A safe, mutable text stream implementation backed by a [SourceFile].

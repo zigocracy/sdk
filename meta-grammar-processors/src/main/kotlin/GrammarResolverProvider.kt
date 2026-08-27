@@ -1,10 +1,10 @@
-package net.landless_city.zigocracy.processor
+package com.zigocracy.sdk.processor
 
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
-import net.landless_city.zigocracy.processor.emitters.LexerRegistryEmitter
-import net.landless_city.zigocracy.processor.emitters.ParserRegistryEmitter
+import com.zigocracy.sdk.processor.emitters.LexerRegistryEmitter
+import com.zigocracy.sdk.processor.emitters.ParserRegistryEmitter
 
 /**
  * KSP entry point that assembles the [GrammarResolver] with all enabled [GrammarEmitter]s.
@@ -13,7 +13,7 @@ import net.landless_city.zigocracy.processor.emitters.ParserRegistryEmitter
  * with a single provider. The META-INF services file should reference only this class:
  *
  * ```
- * net.landless_city.zigocracy.processor.GrammarResolverProvider
+ * com.zigocracy.sdk.processor.GrammarResolverProvider
  * ```
  *
  * ## Emitter registration

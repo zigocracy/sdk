@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.cli
+package com.zigocracy.sdk.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
@@ -6,7 +6,7 @@ import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.multiple
 import com.github.ajalt.clikt.parameters.types.path
-import net.landless_city.zigocracy.zon.*
+import com.zigocracy.sdk.zon.*
 import java.nio.file.Files
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory

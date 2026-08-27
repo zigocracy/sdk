@@ -1,6 +1,6 @@
-package net.landless_city.zigocracy.zig.scanner
+package com.zigocracy.sdk.zig.scanner
 
-import net.landless_city.zigocracy.zig.text.impl.StringTextStream
+import com.zigocracy.sdk.zig.text.impl.StringTextStream
 import org.junit.jupiter.api.Assertions.assertTrue
 
 /**

@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zig.syntax
+package com.zigocracy.sdk.zig.syntax
 
 sealed interface SyntaxKind
 

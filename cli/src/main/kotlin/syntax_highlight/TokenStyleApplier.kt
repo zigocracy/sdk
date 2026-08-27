@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.cli.syntax_highlight
+package com.zigocracy.sdk.cli.syntax_highlight
 
-import net.landless_city.zigocracy.zig.lexer.TokenDiagnostic
-import net.landless_city.zigocracy.zig.syntax.TokenEvent
+import com.zigocracy.sdk.zig.lexer.TokenDiagnostic
+import com.zigocracy.sdk.zig.syntax.TokenEvent
 
 internal object TokenStyleApplier {
 	fun applyStyles(

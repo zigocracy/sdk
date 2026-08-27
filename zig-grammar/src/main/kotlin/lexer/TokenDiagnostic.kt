@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.zig.lexer
+package com.zigocracy.sdk.zig.lexer
 
-import net.landless_city.zigocracy.zig.shared.DiagnosticCode
-import net.landless_city.zigocracy.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.shared.DiagnosticCode
+import com.zigocracy.sdk.zig.text.CodeUnits
 
 /**
  * An error or warning found inside a single token.

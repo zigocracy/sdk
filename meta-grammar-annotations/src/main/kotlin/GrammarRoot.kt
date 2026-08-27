@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.grammar.annotations
+package com.zigocracy.sdk.grammar.annotations
 
 /**
  * Marks the enum class that serves as the root of the token hierarchy.

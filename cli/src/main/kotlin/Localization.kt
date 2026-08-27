@@ -1,6 +1,6 @@
-package net.landless_city.zigocracy.zig.cli
+package com.zigocracy.sdk.cli
 
-import net.landless_city.zigocracy.zig.shared.DiagnosticCode
+import com.zigocracy.sdk.zig.shared.DiagnosticCode
 
 internal interface DiagnosticLocalizer {
 	fun getMessage(code: DiagnosticCode): String

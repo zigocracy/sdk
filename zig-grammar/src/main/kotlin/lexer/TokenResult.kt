@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.zig.lexer
+package com.zigocracy.sdk.zig.lexer
 
-import net.landless_city.zigocracy.zig.shared.DiagnosticSeverity
-import net.landless_city.zigocracy.zig.syntax.TokenEvent
+import com.zigocracy.sdk.zig.shared.DiagnosticSeverity
+import com.zigocracy.sdk.zig.syntax.TokenEvent
 
 
 /**

@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.cli
+package com.zigocracy.sdk.cli
 
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.NoOpCliktCommand

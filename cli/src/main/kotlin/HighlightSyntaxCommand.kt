@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.cli
+package com.zigocracy.sdk.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
@@ -10,13 +10,13 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.enum
 import com.github.ajalt.clikt.parameters.types.path
-import net.landless_city.zigocracy.cli.syntax_highlight.DarkSyntaxHighlightTheme
-import net.landless_city.zigocracy.cli.syntax_highlight.HighlightPrinter
-import net.landless_city.zigocracy.cli.syntax_highlight.LightSyntaxHighlightTheme
-import net.landless_city.zigocracy.zig.parser.Parser
-import net.landless_city.zigocracy.zig.syntax.traverseFromRoot
-import net.landless_city.zigocracy.zig.text.LoadResult
-import net.landless_city.zigocracy.zig.text.SourceFile
+import com.zigocracy.sdk.cli.syntax_highlight.DarkSyntaxHighlightTheme
+import com.zigocracy.sdk.cli.syntax_highlight.HighlightPrinter
+import com.zigocracy.sdk.cli.syntax_highlight.LightSyntaxHighlightTheme
+import com.zigocracy.sdk.zig.parser.Parser
+import com.zigocracy.sdk.zig.syntax.traverseFromRoot
+import com.zigocracy.sdk.zig.text.LoadResult
+import com.zigocracy.sdk.zig.text.SourceFile
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile

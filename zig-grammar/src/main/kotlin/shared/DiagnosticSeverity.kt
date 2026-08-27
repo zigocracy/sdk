@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zig.shared
+package com.zigocracy.sdk.zig.shared
 
 enum class DiagnosticSeverity {
 	Error,

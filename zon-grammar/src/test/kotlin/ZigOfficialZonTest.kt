@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zon
+package com.zigocracy.sdk.zon
 
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.params.ParameterizedTest

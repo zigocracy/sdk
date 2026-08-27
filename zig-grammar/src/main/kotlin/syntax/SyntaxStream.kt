@@ -1,7 +1,7 @@
-package net.landless_city.zigocracy.zig.syntax
+package com.zigocracy.sdk.zig.syntax
 
-import net.landless_city.zigocracy.zig.lexer.TokenDiagnostic
-import net.landless_city.zigocracy.zig.text.CodeUnits
+import com.zigocracy.sdk.zig.lexer.TokenDiagnostic
+import com.zigocracy.sdk.zig.text.CodeUnits
 
 /**
  * A high-fidelity structural snapshot of a parsed document.

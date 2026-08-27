@@ -1,15 +1,15 @@
-package net.landless_city.zigocracy.cli.diagnostics
+package com.zigocracy.sdk.cli.diagnostics
 
 import com.github.ajalt.mordant.rendering.TextAlign
 import com.github.ajalt.mordant.rendering.TextColors.gray
 import com.github.ajalt.mordant.terminal.Terminal
 import com.github.ajalt.mordant.widgets.Panel
-import net.landless_city.zigocracy.cli.syntax_highlight.SyntaxHighlightTheme
-import net.landless_city.zigocracy.zig.cli.EnglishDiagnosticLocalizer
-import net.landless_city.zigocracy.zig.lexer.TokenDiagnostic
-import net.landless_city.zigocracy.zig.parser.ParserResult
-import net.landless_city.zigocracy.zig.syntax.traverseFromRoot
-import net.landless_city.zigocracy.zig.text.LineMap
+import com.zigocracy.sdk.cli.EnglishDiagnosticLocalizer
+import com.zigocracy.sdk.cli.syntax_highlight.SyntaxHighlightTheme
+import com.zigocracy.sdk.zig.lexer.TokenDiagnostic
+import com.zigocracy.sdk.zig.parser.ParserResult
+import com.zigocracy.sdk.zig.syntax.traverseFromRoot
+import com.zigocracy.sdk.zig.text.LineMap
 import java.nio.file.Path
 
 internal class RichDiagnosticsFormatter(val contextSize: Int) : DiagnosticsFormatter {

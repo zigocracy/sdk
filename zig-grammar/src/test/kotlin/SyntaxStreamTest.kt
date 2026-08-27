@@ -1,8 +1,8 @@
-package net.landless_city.zigocracy.zig
+package com.zigocracy.sdk.zig
 
-import net.landless_city.zigocracy.zig.syntax.NodeKind
-import net.landless_city.zigocracy.zig.syntax.SyntaxStreamBuilder
-import net.landless_city.zigocracy.zig.syntax.TokenKind
+import com.zigocracy.sdk.zig.syntax.NodeKind
+import com.zigocracy.sdk.zig.syntax.SyntaxStreamBuilder
+import com.zigocracy.sdk.zig.syntax.TokenKind
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested

@@ -1,4 +1,4 @@
-package net.landless_city.zigocracy.zon
+package com.zigocracy.sdk.zon
 
 import java.math.BigDecimal
 import java.math.BigInteger
