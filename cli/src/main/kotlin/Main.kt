@@ -14,12 +14,12 @@ public class Zigocracy : NoOpCliktCommand() {
 		This means current commands can change or break at any time without warning.
 
 		If you think you found a bug, you can report it here: 
-		https://github.com/BratishkaErik/zigocracy/issues
+		https://github.com/zigocracy/sdk/issues
 
 		Also, if you want to ask questions, discuss things with others, or give feedback, you are always welcome in our open forum: 
-		https://github.com/BratishkaErik/zigocracy/discussions
+		https://github.com/zigocracy/sdk/discussions
 
-		Thank you for trying out Zigocracy. Happy hacking!"""
+		Thank you for trying out Zigocracy. We really hope it will make your development experience smooth and rewarding."""
 		.trimIndent().replace("\n", "\u0085")
 }
 
