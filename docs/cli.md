@@ -122,3 +122,88 @@ at the bottom to show the overall results.
 * `1` — Syntax error. One or more files contain broken or invalid ZON syntax.
 * `2` — No files found. Scanned paths contain no `.zon` files to validate.
 
+### `highlight-syntax`
+
+Print Zig source files with full syntax highlighting like a cat tool.
+
+#### Syntax
+
+```shell
+zigocracy highlight-syntax [OPTIONS] <paths>...
+```
+
+#### Options
+
+* `--theme` — Specify terminal visual scheme preference (`light` or `dark`). Default: `dark`.
+
+#### Examples
+
+Highlight a single file:
+
+```shell
+zigocracy highlight-syntax main.zig
+```
+
+Highlight multiple files and directories at once:
+
+```shell
+zigocracy highlight-syntax src/ math.zig build.zig
+```
+
+Force a specific theme configuration:
+
+```shell
+zigocracy highlight-syntax --theme=light main.zig
+```
+
+#### Exit codes
+
+* `0` — Success. The tool processed and printed all specified Zig files.
+* `2` — No files found. Scanned paths contain no `.zig` files to process.
+
+### `check-syntax`
+
+Check Zig source files for syntax errors and report them.
+
+#### Syntax
+
+```shell
+zigocracy check-syntax [OPTIONS] <paths>...
+```
+
+#### Options
+
+* `--theme` — Specify terminal visual scheme preference (`light` or `dark`). Default: `dark`.
+* `--error-style` — Format for reporting syntax errors (`gnu`, `rich`, or `rich-<N>` where `<N>` is the context line count). Default: `rich` (evaluates to 3 lines of context).
+
+#### Examples
+
+Check a single file with default reporting options:
+
+```shell
+zigocracy check-syntax main.zig
+```
+
+Scan an entire directory recursively:
+
+```shell
+zigocracy check-syntax src/
+```
+
+Print compiler diagnostics in the standard single-line GNU format:
+
+```shell
+zigocracy check-syntax --error-style=gnu src/
+```
+
+Change the number of surrounding code lines displayed for each error:
+
+```shell
+zigocracy check-syntax --error-style=rich-5 src/
+```
+
+#### Exit codes
+
+* `0` — Success. All analyzed files are syntactically correct.
+* `1` — Syntax error. One or more files contain invalid syntax or failed processing.
+* `2` — No files found. Scanned paths contain no `.zig` files to process.
