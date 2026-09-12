@@ -2,26 +2,29 @@ package com.zigocracy.sdk.zig.parser
 
 import com.zigocracy.sdk.zig.lexer.LookaheadTokenReader
 import com.zigocracy.sdk.zig.syntax.NodeKind
+import com.zigocracy.sdk.zig.syntax.SyntaxStream
 import com.zigocracy.sdk.zig.syntax.SyntaxStreamBuilder
-import com.zigocracy.sdk.zig.text.SourceFile
-import com.zigocracy.sdk.zig.text.impl.SourceFileTextStream
+import com.zigocracy.sdk.zig.text.TextStream
+import com.zigocracy.sdk.zig.text.impl.StringTextStream
 
 object Parser {
 	/**
-	 * Public entry point that performs top-down syntax analysis and
+	 * Public entry point that performs top-down syntax analysis on a [TextStream] and
 	 * yields a unified linear syntax event stream with collected diagnostics.
 	 */
-	fun parseSyntax(source: SourceFile): ParserResult {
-		// Inputs
-		val textStream = SourceFileTextStream(source)
-		val tokenReader = LookaheadTokenReader(textStream)
-		// Outputs
+	fun parseSyntax(stream: TextStream): SyntaxStream {
+		val tokenReader = LookaheadTokenReader(stream)
 		val builder = SyntaxStreamBuilder()
 
 		parseFile(tokenReader, builder)
 
-		return ParserResult(source, builder.build())
+		return builder.build()
 	}
+
+	/**
+	 * Convenience entry point that performs top-down syntax analysis directly on a raw [String].
+	 */
+	fun parseSyntax(text: String): SyntaxStream = parseSyntax(StringTextStream(text))
 
 	private fun parseFile(
 		reader: LookaheadTokenReader,

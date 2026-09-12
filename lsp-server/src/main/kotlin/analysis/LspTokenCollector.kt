@@ -1,17 +1,17 @@
 package com.zigocracy.sdk.lsp.analysis
 
+import com.zigocracy.sdk.engine.ParsedFile
 import com.zigocracy.sdk.lsp.server.ZigocracyLanguageServer
 import com.zigocracy.sdk.zig.syntax.TokenEvent
 import com.zigocracy.sdk.zig.syntax.VisualGroup
 import com.zigocracy.sdk.zig.syntax.classifyToVisualGroup
 
-internal class LspTokenCollector(private val snapshot: DocumentSnapshot) {
-	private val tokensData = mutableListOf<Int>()
-
+internal class LspTokenCollector(private val parsedFile: ParsedFile) {
 	fun collectAndEncode(): List<Int> {
-		val stream = snapshot.stream
-		val lineMap = snapshot.source.lineMap
+		val stream = parsedFile.stream
+		val lineMap = parsedFile.source.lineMap
 
+		val tokensData = ArrayList<Int>(stream.events.size * 5)
 		var absOffset = 0
 		var prevLine = 0
 		var prevChar = 0

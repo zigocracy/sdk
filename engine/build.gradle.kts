@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-	implementation(libs.lsp4j)
-	implementation(project(":engine"))
+	api(project(":zig-grammar"))
+	api(project(":zon-grammar"))
 
 	testImplementation(libs.junit.jupiter)
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")

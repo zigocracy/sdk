@@ -1,4 +1,4 @@
-package com.zigocracy.sdk.zig.text
+package com.zigocracy.sdk.engine.vfs
 
 class LineMap private constructor(
 	private val lineStarts: IntArray,

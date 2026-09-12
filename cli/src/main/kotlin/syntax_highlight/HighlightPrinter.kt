@@ -1,11 +1,11 @@
 package com.zigocracy.sdk.cli.syntax_highlight
 
 import com.github.ajalt.mordant.terminal.Terminal
+import com.zigocracy.sdk.engine.vfs.SourceFile
 import com.zigocracy.sdk.zig.lexer.TokenDiagnostic
 import com.zigocracy.sdk.zig.syntax.NodeEvent
 import com.zigocracy.sdk.zig.syntax.SyntaxStreamVisitor
 import com.zigocracy.sdk.zig.syntax.TokenEvent
-import com.zigocracy.sdk.zig.text.SourceFile
 
 internal class HighlightPrinter(
 	private val terminal: Terminal,

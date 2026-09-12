@@ -6,11 +6,13 @@ import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.multiple
 import com.github.ajalt.clikt.parameters.types.path
+import com.zigocracy.sdk.engine.module.FileKind
+import com.zigocracy.sdk.engine.module.ImportKind
 import com.zigocracy.sdk.zon.*
 import java.nio.file.Files
-import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
+import kotlin.io.path.name
 import kotlin.io.path.walk
 
 internal class CheckZon : CliktCommand(name = "check-zon") {
@@ -25,8 +27,11 @@ internal class CheckZon : CliktCommand(name = "check-zon") {
 		val files = targets.flatMap { path ->
 			try {
 				if (path.isDirectory()) {
-					path.walk().filter {
-						it.isRegularFile() && it.extension.equals("zon", ignoreCase = true)
+					path.walk().filter { candidate ->
+						candidate.isRegularFile() && when (val kind = ImportKind.classify(candidate.name)) {
+							is ImportKind.File -> kind.kind == FileKind.Zon
+							else -> false
+						}
 					}.toList()
 				} else {
 					listOf(path)

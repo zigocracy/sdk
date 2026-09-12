@@ -1,5 +1,6 @@
 package com.zigocracy.sdk.lsp.analysis
 
+import com.zigocracy.sdk.engine.ParsedFile
 import com.zigocracy.sdk.zig.shared.DiagnosticPresentation
 import com.zigocracy.sdk.zig.shared.EnglishLspDiagnosticLocalizer
 import com.zigocracy.sdk.zig.syntax.TokenEvent
@@ -8,13 +9,13 @@ import com.zigocracy.sdk.zig.shared.DiagnosticSeverity as ZigSeverity
 import org.eclipse.lsp4j.DiagnosticSeverity as LspSeverity
 
 internal class LspDiagnosticCollector(
-	private val snapshot: DocumentSnapshot,
+	private val parsedFile: ParsedFile,
 	private val supportsRelatedInformation: Boolean
 ) {
 	fun collectAndEncode(uri: String): List<Diagnostic> {
 		val lspDiagnostics = mutableListOf<Diagnostic>()
-		val stream = snapshot.stream
-		val lineMap = snapshot.source.lineMap
+		val stream = parsedFile.stream
+		val lineMap = parsedFile.source.lineMap
 		var currentAbsoluteOffset = 0
 
 		for (index in stream.events.indices) {

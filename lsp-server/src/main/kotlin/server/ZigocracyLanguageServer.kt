@@ -1,5 +1,6 @@
 package com.zigocracy.sdk.lsp.server
 
+import com.zigocracy.sdk.engine.WorkspaceContext
 import com.zigocracy.sdk.zig.syntax.VisualGroup
 import org.eclipse.lsp4j.*
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class ZigocracyLanguageServer(
 	private val onExit: (isNormalShutdown: Boolean) -> Unit
 ) : LanguageServer, LanguageClientAware {
+	val workspaceContext: WorkspaceContext = WorkspaceContext.create()
 	private lateinit var client: LanguageClient
 	private val textDocumentService = ZigTextDocumentService(this)
 	private val isShutdownInitiated = AtomicBoolean(false)

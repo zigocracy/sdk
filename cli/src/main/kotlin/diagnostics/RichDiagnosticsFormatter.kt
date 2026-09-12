@@ -6,31 +6,34 @@ import com.github.ajalt.mordant.terminal.Terminal
 import com.github.ajalt.mordant.widgets.Panel
 import com.zigocracy.sdk.cli.EnglishDiagnosticLocalizer
 import com.zigocracy.sdk.cli.syntax_highlight.SyntaxHighlightTheme
+import com.zigocracy.sdk.engine.vfs.LineMap
+import com.zigocracy.sdk.engine.vfs.SourceFile
 import com.zigocracy.sdk.zig.lexer.TokenDiagnostic
-import com.zigocracy.sdk.zig.parser.ParserResult
+import com.zigocracy.sdk.zig.syntax.SyntaxStream
 import com.zigocracy.sdk.zig.syntax.traverseFromRoot
-import com.zigocracy.sdk.zig.text.LineMap
 import java.nio.file.Path
 
 internal class RichDiagnosticsFormatter(val contextSize: Int) : DiagnosticsFormatter {
 	override fun report(
 		terminal: Terminal,
 		path: Path,
-		parserResult: ParserResult,
+		sourceFile: SourceFile,
+		stream: SyntaxStream,
 		theme: SyntaxHighlightTheme
 	) {
-		val printer = RichStreamPrinter(terminal, path, parserResult, theme, contextSize)
-		parserResult.stream.traverseFromRoot(printer)
+		val printer = RichStreamPrinter(terminal, path, sourceFile, stream, theme, contextSize)
+		stream.traverseFromRoot(printer)
 	}
 }
 
 internal class RichStreamPrinter(
 	terminal: Terminal,
 	path: Path,
-	parserResult: ParserResult,
+	sourceFile: SourceFile,
+	stream: SyntaxStream,
 	theme: SyntaxHighlightTheme,
 	val contextSize: Int,
-) : BaseDiagnosticsPrinter(terminal, path, parserResult, theme) {
+) : BaseDiagnosticsPrinter(terminal, path, sourceFile, stream, theme) {
 
 	override fun onDiagnosticFound(diagnostic: TokenDiagnostic, coordinates: LineMap.Coordinates) {
 		val severity = buildSeverity(diagnostic.code)
@@ -44,7 +47,7 @@ internal class RichStreamPrinter(
 	}
 
 	private fun printRichContextBox(targetLineIndex: Int) {
-		val lineMap = parserResult.source.lineMap
+		val lineMap = sourceFile.lineMap
 		val maxLineIndex = lineMap.getLineCount() - 1
 		val paddingBefore = (contextSize - 1) / 2
 		val paddingAfter = contextSize - 1 - paddingBefore

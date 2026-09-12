@@ -14,6 +14,8 @@ rootProject.name = "zigocracy"
 include("cli")
 include("lsp-server")
 
+include("engine")
+
 include("zig-grammar")
 include("zon-grammar")
 

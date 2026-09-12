@@ -7,20 +7,22 @@ import com.github.ajalt.mordant.terminal.Terminal
 import com.zigocracy.sdk.cli.EnglishDiagnosticLocalizer
 import com.zigocracy.sdk.cli.syntax_highlight.SyntaxHighlightTheme
 import com.zigocracy.sdk.cli.syntax_highlight.TokenStyleApplier
+import com.zigocracy.sdk.engine.vfs.LineMap
+import com.zigocracy.sdk.engine.vfs.SourceFile
 import com.zigocracy.sdk.zig.lexer.TokenDiagnostic
-import com.zigocracy.sdk.zig.parser.ParserResult
 import com.zigocracy.sdk.zig.shared.DiagnosticCode
 import com.zigocracy.sdk.zig.shared.DiagnosticSeverity
 import com.zigocracy.sdk.zig.syntax.NodeEvent
+import com.zigocracy.sdk.zig.syntax.SyntaxStream
 import com.zigocracy.sdk.zig.syntax.SyntaxStreamVisitor
 import com.zigocracy.sdk.zig.syntax.TokenEvent
-import com.zigocracy.sdk.zig.text.LineMap
 import java.nio.file.Path
 
 internal abstract class BaseDiagnosticsPrinter(
 	protected val terminal: Terminal,
 	protected val path: Path,
-	protected val parserResult: ParserResult,
+	protected val sourceFile: SourceFile,
+	protected val stream: SyntaxStream,
 	protected val theme: SyntaxHighlightTheme
 ) : SyntaxStreamVisitor {
 	private var currentAbsoluteOffset = 0
@@ -30,7 +32,7 @@ internal abstract class BaseDiagnosticsPrinter(
 
 	final override fun visitToken(index: Int, event: TokenEvent, diagnostics: List<TokenDiagnostic>) {
 		if (diagnostics.isNotEmpty()) {
-			val lineMap = parserResult.source.lineMap
+			val lineMap = sourceFile.lineMap
 			for (diag in diagnostics) {
 				val absoluteErrorOffset = currentAbsoluteOffset + diag.startOffset
 				val coordinates = lineMap.getCoordinates(absoluteErrorOffset)
@@ -59,10 +61,9 @@ internal abstract class BaseDiagnosticsPrinter(
 	}
 
 	protected fun buildSourceLine(lineIndex: Int): String {
-		val lineMap = parserResult.source.lineMap
+		val lineMap = sourceFile.lineMap
 		val lineRange = lineMap.getLineRange(lineIndex)
 		var trackerOffset = 0
-		val stream = parserResult.stream
 
 		return buildString {
 			for (index in stream.events.indices) {
@@ -72,7 +73,7 @@ internal abstract class BaseDiagnosticsPrinter(
 
 					if (tokenEnd > lineRange.first && trackerOffset <= lineRange.last) {
 						val rawTokenText =
-							parserResult.source
+							sourceFile
 								.getTextSlice(trackerOffset, event.width)
 								.replace("\n", "")
 								.replace("\r", "")

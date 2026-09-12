@@ -13,13 +13,15 @@ import com.github.ajalt.clikt.parameters.types.path
 import com.zigocracy.sdk.cli.syntax_highlight.DarkSyntaxHighlightTheme
 import com.zigocracy.sdk.cli.syntax_highlight.HighlightPrinter
 import com.zigocracy.sdk.cli.syntax_highlight.LightSyntaxHighlightTheme
+import com.zigocracy.sdk.engine.WorkspaceContext
+import com.zigocracy.sdk.engine.module.FileKind
+import com.zigocracy.sdk.engine.module.ImportKind
+import com.zigocracy.sdk.engine.vfs.VfsResult
 import com.zigocracy.sdk.zig.parser.Parser
 import com.zigocracy.sdk.zig.syntax.traverseFromRoot
-import com.zigocracy.sdk.zig.text.LoadResult
-import com.zigocracy.sdk.zig.text.SourceFile
-import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
+import kotlin.io.path.name
 import kotlin.io.path.walk
 
 internal class HighlightSyntaxCommand : CliktCommand(name = "highlight-syntax") {
@@ -46,8 +48,11 @@ internal class HighlightSyntaxCommand : CliktCommand(name = "highlight-syntax") 
 		val files = targets.flatMap { path ->
 			try {
 				if (path.isDirectory()) {
-					path.walk().filter {
-						it.isRegularFile() && it.extension.equals("zig", ignoreCase = true)
+					path.walk().filter { candidate ->
+						candidate.isRegularFile() && when (val kind = ImportKind.classify(candidate.name)) {
+							is ImportKind.File -> kind.kind == FileKind.Zig
+							else -> false
+						}
 					}.toList()
 				} else {
 					listOf(path)
@@ -74,31 +79,35 @@ internal class HighlightSyntaxCommand : CliktCommand(name = "highlight-syntax") 
 			throw ProgramResult(2)
 		}
 
+		val workspaceContext = WorkspaceContext.create()
+		val vfs = workspaceContext.vfs
+
 		for (path in files) {
-			when (val loadResult = SourceFile.load(path)) {
-				is LoadResult.InvalidExtension -> {
-					echo("  ✗ Error: Invalid extension '.${loadResult.extension}'. Expected '.zig'")
+			when (val result = vfs.acquire(path)) {
+				is VfsResult.NotFound -> {
+					echo("  ✗ Error: File not found: '$path'")
 				}
 
-				is LoadResult.ReadError -> {
-					val reason = loadResult.cause.localizedMessage ?: loadResult.cause::class.simpleName ?: "IO error"
-					echo("  ✗ Error: Failed to read file ($reason)")
+				is VfsResult.ReadError -> {
+					val reason = result.cause.localizedMessage ?: result.cause::class.simpleName ?: "IO error"
+					echo("  ✗ Error: Failed to read file '$path' ($reason)")
 				}
 
-				is LoadResult.Success -> {
+				is VfsResult.Success -> {
 					try {
-						val parserResult = Parser.parseSyntax(loadResult.file)
+						val sourceFile = result.file
+						val stream = Parser.parseSyntax(sourceFile.text)
 
 						val highlighter = HighlightPrinter(
 							terminal = terminal,
-							sourceFile = parserResult.source,
+							sourceFile = sourceFile,
 							theme = theme
 						)
 
-						parserResult.stream.traverseFromRoot(highlighter)
+						stream.traverseFromRoot(highlighter)
 					} catch (e: Exception) {
 						val reason = e.localizedMessage ?: e::class.simpleName ?: "Unknown failure"
-						echo("  ✗ Failed to analyze file ($reason)")
+						echo("  ✗ Failed to analyze file '$path' ($reason)")
 					}
 				}
 			}
