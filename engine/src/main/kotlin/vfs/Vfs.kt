@@ -126,6 +126,72 @@ class Vfs {
 		}
 	}
 
+	/**
+	 * Invalidates the cached disk snapshot for [path], forcing the next [acquire]
+	 * to reload from disk.
+	 *
+	 * If an in-memory editor overlay is active, this method is a no-op and returns `false`,
+	 * because editor overlays represent authoritative in-memory state over disk.
+	 *
+	 * @return `true` if a disk snapshot was invalidated; `false` otherwise.
+	 *
+	 * Time Complexity: Θ(1)
+	 * Memory Complexity: Θ(1)
+	 */
+	fun invalidate(path: Path): Boolean {
+		val canonical = canonicalize(path)
+		val fileId = pathToId[canonical] ?: return false
+		if (overlayFiles.contains(fileId)) {
+			return false
+		}
+		val removed = activeSnapshots.remove(fileId) != null
+		if (removed) {
+			revisions[fileId]?.incrementAndGet()
+		}
+		return removed
+	}
+
+	/**
+	 * Proactively refreshes [path] from disk.
+	 *
+	 * If an in-memory editor overlay is active, the overlay snapshot is returned directly.
+	 * Otherwise, any existing cached snapshot is evicted and the file is immediately re-read
+	 * from disk, advancing its revision if previously cached.
+	 *
+	 * Time Complexity: Θ(1) hit for overlay, Θ(N) where N is file size on disk.
+	 * Memory Complexity: Θ(1) hit for overlay, Θ(N) for disk read.
+	 */
+	fun refresh(path: Path, originalPath: String = path.toString()): VfsResult {
+		val canonical = canonicalize(path)
+		val fileId = getOrRegisterId(canonical)
+		if (!overlayFiles.contains(fileId)) {
+			val hadSnapshot = activeSnapshots.remove(fileId) != null
+			if (hadSnapshot) {
+				revisions[fileId]?.incrementAndGet()
+			}
+		}
+		return acquire(canonical, originalPath)
+	}
+
+	/**
+	 * Deletes [path] from the virtual file system, clearing active overlays and cached snapshots.
+	 *
+	 * @return `true` if an active overlay or snapshot was removed; `false` otherwise.
+	 *
+	 * Time Complexity: Θ(1)
+	 * Memory Complexity: Θ(1)
+	 */
+	fun delete(path: Path): Boolean {
+		val canonical = canonicalize(path)
+		val fileId = pathToId[canonical] ?: return false
+		val hadOverlay = overlayFiles.remove(fileId)
+		val hadSnapshot = activeSnapshots.remove(fileId) != null
+		if (hadOverlay || hadSnapshot) {
+			revisions[fileId]?.incrementAndGet()
+		}
+		return hadOverlay || hadSnapshot
+	}
+
 	fun getActiveSnapshot(id: FileId): SourceFile? = activeSnapshots[id]
 
 	fun getActiveSnapshot(path: Path): SourceFile? {

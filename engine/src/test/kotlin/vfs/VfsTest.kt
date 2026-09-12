@@ -108,6 +108,149 @@ class VfsTest {
 	}
 
 	@Nested
+	inner class Invalidate {
+		@Test
+		fun `invalidates cached disk snapshot so next acquire reloads fresh disk content`(@TempDir tempDir: Path) {
+			val diskFile = tempDir.resolve("main.zig")
+			val text1 = "version 1"
+			val text2 = "version 2"
+			Files.writeString(diskFile, text1)
+
+			val vfs = Vfs()
+			val initialResult = assertInstanceOf<VfsResult.Success>(vfs.acquire(diskFile))
+			assertEquals(text1, initialResult.file.text)
+			assertEquals(0, initialResult.file.revision)
+
+			Files.writeString(diskFile, text2)
+			// Without invalidation, Vfs serves the cached snapshot
+			assertEquals(text1, assertInstanceOf<VfsResult.Success>(vfs.acquire(diskFile)).file.text)
+
+			val invalidated = vfs.invalidate(diskFile)
+			assertTrue(invalidated)
+
+			val refreshedResult = assertInstanceOf<VfsResult.Success>(vfs.acquire(diskFile))
+			assertEquals(text2, refreshedResult.file.text)
+			assertEquals(1, refreshedResult.file.revision)
+		}
+
+		@Test
+		fun `does not invalidate file when active overlay exists`(@TempDir tempDir: Path) {
+			val diskFile = tempDir.resolve("main.zig")
+			Files.writeString(diskFile, "disk text")
+
+			val vfs = Vfs()
+			vfs.setOverlay(diskFile, "overlay text")
+
+			val invalidated = vfs.invalidate(diskFile)
+			assertFalse(invalidated)
+
+			val result = assertInstanceOf<VfsResult.Success>(vfs.acquire(diskFile))
+			assertEquals("overlay text", result.file.text)
+		}
+
+		@Test
+		fun `returns false when invalidating unknown or uncached file`() {
+			val vfs = Vfs()
+			val unknown = Path.of("nonexistent.zig")
+
+			assertFalse(vfs.invalidate(unknown))
+		}
+	}
+
+	@Nested
+	inner class Refresh {
+		@Test
+		fun `proactively reloads file from disk and increments revision`(@TempDir tempDir: Path) {
+			val diskFile = tempDir.resolve("main.zig")
+			val text1 = "first"
+			val text2 = "second"
+			Files.writeString(diskFile, text1)
+
+			val vfs = Vfs()
+			val res1 = assertInstanceOf<VfsResult.Success>(vfs.acquire(diskFile))
+			assertEquals(text1, res1.file.text)
+			assertEquals(0, res1.file.revision)
+
+			Files.writeString(diskFile, text2)
+			val refreshed = assertInstanceOf<VfsResult.Success>(vfs.refresh(diskFile))
+			assertEquals(text2, refreshed.file.text)
+			assertEquals(1, refreshed.file.revision)
+
+			// Subsequent acquire should return cached refreshed snapshot
+			val subsequent = assertInstanceOf<VfsResult.Success>(vfs.acquire(diskFile))
+			assertSame(refreshed.file, subsequent.file)
+		}
+
+		@Test
+		fun `preserves overlay when refresh is called on file with overlay`(@TempDir tempDir: Path) {
+			val diskFile = tempDir.resolve("main.zig")
+			Files.writeString(diskFile, "disk initial")
+
+			val vfs = Vfs()
+			val overlay = vfs.setOverlay(diskFile, "memory content")
+
+			Files.writeString(diskFile, "disk modified")
+			val refreshed = assertInstanceOf<VfsResult.Success>(vfs.refresh(diskFile))
+			assertSame(overlay, refreshed.file)
+			assertEquals("memory content", refreshed.file.text)
+		}
+
+		@Test
+		fun `reports not found when refreshing deleted disk file`(@TempDir tempDir: Path) {
+			val diskFile = tempDir.resolve("deleted.zig")
+			Files.writeString(diskFile, "content")
+
+			val vfs = Vfs()
+			assertInstanceOf<VfsResult.Success>(vfs.acquire(diskFile))
+
+			Files.delete(diskFile)
+			val result = vfs.refresh(diskFile)
+			assertInstanceOf<VfsResult.NotFound>(result)
+		}
+	}
+
+	@Nested
+	inner class Delete {
+		@Test
+		fun `removes overlay and active snapshot from vfs`() {
+			val file = Path.of("file.zig")
+			val vfs = Vfs()
+			vfs.setOverlay(file, "content")
+
+			assertTrue(vfs.hasOverlay(file))
+			assertNotNull(vfs.getActiveSnapshot(file))
+
+			val deleted = vfs.delete(file)
+			assertTrue(deleted)
+
+			assertFalse(vfs.hasOverlay(file))
+			assertNull(vfs.getActiveSnapshot(file))
+		}
+
+		@Test
+		fun `removes cached disk snapshot on delete`(@TempDir tempDir: Path) {
+			val diskFile = tempDir.resolve("main.zig")
+			Files.writeString(diskFile, "disk content")
+
+			val vfs = Vfs()
+			assertInstanceOf<VfsResult.Success>(vfs.acquire(diskFile))
+			assertNotNull(vfs.getActiveSnapshot(diskFile))
+
+			val deleted = vfs.delete(diskFile)
+			assertTrue(deleted)
+			assertNull(vfs.getActiveSnapshot(diskFile))
+		}
+
+		@Test
+		fun `returns false when deleting untracked file`() {
+			val vfs = Vfs()
+			val file = Path.of("untracked.zig")
+
+			assertFalse(vfs.delete(file))
+		}
+	}
+
+	@Nested
 	inner class PathResolution {
 		@Test
 		fun `canonicalizes path segments lexically without symlink resolution`(@TempDir tempDir: Path) {

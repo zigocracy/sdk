@@ -1,6 +1,7 @@
 package com.zigocracy.sdk.lsp.server
 
 import com.zigocracy.sdk.engine.ParsedFile
+import com.zigocracy.sdk.engine.vfs.VfsResult
 import com.zigocracy.sdk.lsp.analysis.LspDiagnosticCollector
 import com.zigocracy.sdk.lsp.analysis.LspTokenCollector
 import org.eclipse.lsp4j.*
@@ -9,7 +10,6 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
 import org.eclipse.lsp4j.services.LanguageClient
 import org.eclipse.lsp4j.services.TextDocumentService
-import java.net.URI
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -64,18 +64,38 @@ internal class ZigTextDocumentService(
 		diagnosticTasks.remove(uri)?.cancel(true)
 	}
 
-	override fun didSave(params: DidSaveTextDocumentParams) {}
+	override fun didSave(params: DidSaveTextDocumentParams) {
+		if (server.isServerShutdown()) return
 
-	private fun uriToPath(uri: String): Path {
-		return try {
-			val parsed = URI.create(uri)
-			if (parsed.scheme.equals("file", ignoreCase = true)) {
-				Path.of(parsed)
-			} else {
-				Path.of(uri.removePrefix("file://").removePrefix("file:/"))
+		val uri = params.textDocument.uri
+		val path = uriToPath(uri)
+		server.workspaceContext.vfs.refresh(path, originalPath = uri)
+
+		parsedFiles[uri]?.let { triggerDiagnostics(uri, it) }
+	}
+
+	fun onFileCreatedOrChanged(uri: String, path: Path) {
+		if (server.isServerShutdown()) return
+
+		if (parsedFiles.containsKey(uri)) {
+			if (!server.workspaceContext.vfs.hasOverlay(path)) {
+				val result = server.workspaceContext.vfs.acquire(path, originalPath = uri)
+				if (result is VfsResult.Success) {
+					val parsedFile = server.workspaceContext.parse(result.file)
+					parsedFiles[uri] = parsedFile
+					triggerDiagnostics(uri, parsedFile)
+				}
 			}
-		} catch (e: Exception) {
-			Path.of(uri)
+		}
+	}
+
+	fun onFileDeleted(uri: String, path: Path) {
+		if (server.isServerShutdown()) return
+
+		diagnosticTasks.remove(uri)?.cancel(true)
+		val removed = parsedFiles.remove(uri)
+		if (removed != null) {
+			client?.publishDiagnostics(PublishDiagnosticsParams(uri, emptyList()))
 		}
 	}
 
@@ -131,7 +151,11 @@ internal class ZigTextDocumentService(
 
 	private fun computeDiagnosticsOrFallback(uri: String, parsedFile: ParsedFile): List<Diagnostic> {
 		return try {
-			val collector = LspDiagnosticCollector(parsedFile, server.clientSupportsRelatedInformation)
+			val collector = LspDiagnosticCollector(
+				parsedFile = parsedFile,
+				supportsRelatedInformation = server.clientSupportsRelatedInformation,
+				workspaceContext = server.workspaceContext,
+			)
 			collector.collectAndEncode(uri)
 		} catch (e: Exception) {
 			listOf(createFallbackDiagnostic(e))

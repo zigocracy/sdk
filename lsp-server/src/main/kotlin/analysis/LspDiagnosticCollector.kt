@@ -1,6 +1,9 @@
 package com.zigocracy.sdk.lsp.analysis
 
 import com.zigocracy.sdk.engine.ParsedFile
+import com.zigocracy.sdk.engine.WorkspaceContext
+import com.zigocracy.sdk.engine.diagnostics.DiagnosticSeverity as EngineSeverity
+import com.zigocracy.sdk.engine.diagnostics.EngineDiagnostic
 import com.zigocracy.sdk.zig.shared.DiagnosticPresentation
 import com.zigocracy.sdk.zig.shared.EnglishLspDiagnosticLocalizer
 import com.zigocracy.sdk.zig.syntax.TokenEvent
@@ -10,7 +13,8 @@ import org.eclipse.lsp4j.DiagnosticSeverity as LspSeverity
 
 internal class LspDiagnosticCollector(
 	private val parsedFile: ParsedFile,
-	private val supportsRelatedInformation: Boolean
+	private val supportsRelatedInformation: Boolean,
+	private val workspaceContext: WorkspaceContext? = null,
 ) {
 	fun collectAndEncode(uri: String): List<Diagnostic> {
 		val lspDiagnostics = mutableListOf<Diagnostic>()
@@ -43,6 +47,40 @@ internal class LspDiagnosticCollector(
 				currentAbsoluteOffset += event.width
 			}
 		}
+
+		if (workspaceContext != null) {
+			val engineDiagnostics = workspaceContext.analyze(parsedFile)
+			for (diag in engineDiagnostics) {
+				val coords = lineMap.getCoordinates(diag.startOffset)
+				val startPos = Position(coords.line - 1, coords.column - 1)
+				val endPos = Position(coords.line - 1, coords.column - 1 + diag.width)
+				val tokenRange = Range(startPos, endPos)
+				val lspSeverity = mapEngineSeverity(diag.code.severity)
+
+				val lspDiagnostic = if (supportsRelatedInformation && diag.note != null) {
+					Diagnostic(tokenRange, diag.message).apply {
+						severity = lspSeverity
+						source = "zigocracy"
+						relatedInformation = listOf(
+							DiagnosticRelatedInformation(Location(uri, tokenRange), diag.note)
+						)
+					}
+				} else {
+					val message = if (diag.note != null) {
+						"${diag.message}.\nNote: ${diag.note}"
+					} else {
+						diag.message
+					}
+					Diagnostic(tokenRange, message).apply {
+						severity = lspSeverity
+						source = "zigocracy"
+					}
+				}
+
+				lspDiagnostics.add(lspDiagnostic)
+			}
+		}
+
 		return lspDiagnostics
 	}
 
@@ -91,4 +129,11 @@ internal class LspDiagnosticCollector(
 private fun mapSeverity(severity: ZigSeverity): LspSeverity = when (severity) {
 	ZigSeverity.Error -> LspSeverity.Error
 	ZigSeverity.Warning -> LspSeverity.Warning
+}
+
+private fun mapEngineSeverity(severity: EngineSeverity): LspSeverity = when (severity) {
+	EngineSeverity.Error -> LspSeverity.Error
+	EngineSeverity.Warning -> LspSeverity.Warning
+	EngineSeverity.Information -> LspSeverity.Information
+	EngineSeverity.Hint -> LspSeverity.Hint
 }

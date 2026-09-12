@@ -4,9 +4,11 @@ import com.zigocracy.sdk.engine.WorkspaceContext
 import com.zigocracy.sdk.zig.syntax.VisualGroup
 import org.eclipse.lsp4j.*
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
+import org.eclipse.lsp4j.jsonrpc.messages.Either
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
 import org.eclipse.lsp4j.services.*
+import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
@@ -14,9 +16,13 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class ZigocracyLanguageServer(
 	private val onExit: (isNormalShutdown: Boolean) -> Unit
 ) : LanguageServer, LanguageClientAware {
-	val workspaceContext: WorkspaceContext = WorkspaceContext.create()
+	@Volatile
+	var workspaceContext: WorkspaceContext = WorkspaceContext.create()
+		private set
+
 	private lateinit var client: LanguageClient
-	private val textDocumentService = ZigTextDocumentService(this)
+	val textDocumentService = ZigTextDocumentService(this)
+	val workspaceService = ZigWorkspaceService(this)
 	private val isShutdownInitiated = AtomicBoolean(false)
 
 	@Volatile
@@ -24,6 +30,10 @@ internal class ZigocracyLanguageServer(
 		private set
 
 	fun isServerShutdown(): Boolean = isShutdownInitiated.get()
+
+	fun updateWorkspaceRoot(newRoot: Path) {
+		workspaceContext = WorkspaceContext.create(newRoot)
+	}
 
 	companion object {
 		val TOKEN_TYPES = listOf(
@@ -77,6 +87,14 @@ internal class ZigocracyLanguageServer(
 			?.publishDiagnostics
 			?.relatedInformation ?: false
 
+		val rootPath = params.workspaceFolders?.firstOrNull()?.uri?.let { uriToPath(it) }
+			?: params.rootUri?.let { uriToPath(it) }
+			?: params.rootPath?.let { Path.of(it) }
+
+		if (rootPath != null) {
+			workspaceContext = WorkspaceContext.create(rootPath)
+		}
+
 		val result = InitializeResult()
 		val caps = ServerCapabilities().apply {
 			setTextDocumentSync(TextDocumentSyncKind.Full)
@@ -84,6 +102,13 @@ internal class ZigocracyLanguageServer(
 			semanticTokensProvider = SemanticTokensWithRegistrationOptions().apply {
 				legend = SemanticTokensLegend(TOKEN_TYPES, TOKEN_MODIFIERS)
 				setFull(true)
+			}
+
+			workspace = WorkspaceServerCapabilities().apply {
+				workspaceFolders = WorkspaceFoldersOptions().apply {
+					supported = true
+					changeNotifications = Either.forRight(true)
+				}
 			}
 		}
 
@@ -94,14 +119,12 @@ internal class ZigocracyLanguageServer(
 	override fun connect(client: LanguageClient) {
 		this.client = client
 		this.textDocumentService.connect(client)
+		this.workspaceService.connect(client)
 	}
 
 	override fun getTextDocumentService(): TextDocumentService = textDocumentService
 
-	override fun getWorkspaceService(): WorkspaceService = object : WorkspaceService {
-		override fun didChangeConfiguration(params: DidChangeConfigurationParams) {}
-		override fun didChangeWatchedFiles(params: DidChangeWatchedFilesParams) {}
-	}
+	override fun getWorkspaceService(): WorkspaceService = workspaceService
 
 	override fun shutdown(): CompletableFuture<Any> {
 		val alreadyShutdown = isShutdownInitiated.getAndSet(true)
