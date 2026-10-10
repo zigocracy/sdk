@@ -18,6 +18,7 @@ import com.zigocracy.sdk.cli.syntax_highlight.LightSyntaxHighlightTheme
 import com.zigocracy.sdk.zig.parser.Parser
 import com.zigocracy.sdk.zig.text.LoadResult
 import com.zigocracy.sdk.zig.text.SourceFile
+import com.zigocracy.sdk.zig.text.impl.SourceFileTextStream
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
@@ -122,7 +123,7 @@ internal class CheckSyntaxCommand : CliktCommand(name = "check-syntax") {
 				is LoadResult.Success -> {
 					try {
 						val sourceFile = loadResult.file
-						val stream = Parser.parseSyntax(sourceFile)
+						val stream = Parser.parseSyntax(SourceFileTextStream(sourceFile))
 
 						if (stream.diagnostics.isNotEmpty()) {
 							totalErrors += stream.diagnostics.values.sumOf { it.size }
