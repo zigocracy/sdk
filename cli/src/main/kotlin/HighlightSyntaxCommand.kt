@@ -87,15 +87,16 @@ internal class HighlightSyntaxCommand : CliktCommand(name = "highlight-syntax") 
 
 				is LoadResult.Success -> {
 					try {
-						val parserResult = Parser.parseSyntax(loadResult.file)
+						val sourceFile = loadResult.file
+						val stream = Parser.parseSyntax(sourceFile)
 
 						val highlighter = HighlightPrinter(
 							terminal = terminal,
-							sourceFile = parserResult.source,
+							sourceFile = sourceFile,
 							theme = theme
 						)
 
-						parserResult.stream.traverseFromRoot(highlighter)
+						stream.traverseFromRoot(highlighter)
 					} catch (e: Exception) {
 						val reason = e.localizedMessage ?: e::class.simpleName ?: "Unknown failure"
 						echo("  ✗ Failed to analyze file ($reason)")

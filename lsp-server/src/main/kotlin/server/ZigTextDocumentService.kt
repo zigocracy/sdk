@@ -61,9 +61,9 @@ internal class ZigTextDocumentService(
 
 	private fun createNewSnapshot(text: String): DocumentSnapshot {
 		val sourceFile = SourceFile.forTesting(text)
-		val parserResult = Parser.parseSyntax(sourceFile)
+		val stream = Parser.parseSyntax(sourceFile)
 
-		return DocumentSnapshot(text, parserResult.source, parserResult.stream)
+		return DocumentSnapshot(text, sourceFile, stream)
 	}
 
 	private fun triggerDiagnostics(uri: String, snapshot: DocumentSnapshot) {

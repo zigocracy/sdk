@@ -122,12 +122,12 @@ internal class CheckSyntaxCommand : CliktCommand(name = "check-syntax") {
 				is LoadResult.Success -> {
 					try {
 						val sourceFile = loadResult.file
-						val parserResult = Parser.parseSyntax(sourceFile)
+						val stream = Parser.parseSyntax(sourceFile)
 
-						if (parserResult.stream.diagnostics.isNotEmpty()) {
-							totalErrors += parserResult.stream.diagnostics.values.sumOf { it.size }
+						if (stream.diagnostics.isNotEmpty()) {
+							totalErrors += stream.diagnostics.values.sumOf { it.size }
 
-							formatter.report(terminal, path, parserResult, theme)
+							formatter.report(terminal, path, sourceFile, stream, theme)
 						}
 					} catch (e: Exception) {
 						val reason = e.localizedMessage ?: e::class.simpleName ?: "Unknown failure"
