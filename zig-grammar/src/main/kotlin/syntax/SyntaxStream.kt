@@ -80,6 +80,11 @@ class SyntaxStream(
 	 * Memory Complexity: Θ(1)
 	 */
 	fun computeTotalWidth(): CodeUnits = events.sumTokenWidths()
+
+	/**
+	 * Creates a new [SyntaxStreamCursor] positioned at the root node of this stream.
+	 */
+	fun cursor(): SyntaxStreamCursor = SyntaxStreamCursor(this)
 }
 
 /**
