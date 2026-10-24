@@ -4,8 +4,7 @@ plugins {
 }
 
 dependencies {
-	implementation(project(":zig-grammar"))
-	implementation(project(":zon-grammar"))
+	implementation(project(":engine"))
 	implementation(project(":lsp-server"))
 	implementation(libs.clikt)
 	implementation(libs.mordant)

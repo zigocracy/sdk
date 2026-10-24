@@ -7,7 +7,7 @@ import com.zigocracy.sdk.zig.text.TextStream
 /**
  * A safe, mutable text stream implementation backed by a [SourceFile].
  */
-internal class SourceFileTextStream(private val sourceFile: SourceFile) : TextStream {
+class SourceFileTextStream(private val sourceFile: SourceFile) : TextStream {
 	override var textCursor: CodeUnits = 0
 		private set
 

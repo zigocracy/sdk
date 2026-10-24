@@ -5,6 +5,7 @@ import com.zigocracy.sdk.lsp.analysis.LspDiagnosticCollector
 import com.zigocracy.sdk.lsp.analysis.LspTokenCollector
 import com.zigocracy.sdk.zig.parser.Parser
 import com.zigocracy.sdk.zig.text.SourceFile
+import com.zigocracy.sdk.zig.text.impl.SourceFileTextStream
 import org.eclipse.lsp4j.*
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
@@ -61,9 +62,9 @@ internal class ZigTextDocumentService(
 
 	private fun createNewSnapshot(text: String): DocumentSnapshot {
 		val sourceFile = SourceFile.forTesting(text)
-		val parserResult = Parser.parseSyntax(sourceFile)
+		val stream = Parser.parseSyntax(SourceFileTextStream(sourceFile))
 
-		return DocumentSnapshot(text, parserResult.source, parserResult.stream)
+		return DocumentSnapshot(text, sourceFile, stream)
 	}
 
 	private fun triggerDiagnostics(uri: String, snapshot: DocumentSnapshot) {

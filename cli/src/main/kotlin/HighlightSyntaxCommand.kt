@@ -17,6 +17,7 @@ import com.zigocracy.sdk.zig.parser.Parser
 import com.zigocracy.sdk.zig.syntax.traverseFromRoot
 import com.zigocracy.sdk.zig.text.LoadResult
 import com.zigocracy.sdk.zig.text.SourceFile
+import com.zigocracy.sdk.zig.text.impl.SourceFileTextStream
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
@@ -87,15 +88,16 @@ internal class HighlightSyntaxCommand : CliktCommand(name = "highlight-syntax") 
 
 				is LoadResult.Success -> {
 					try {
-						val parserResult = Parser.parseSyntax(loadResult.file)
+						val sourceFile = loadResult.file
+						val stream = Parser.parseSyntax(SourceFileTextStream(sourceFile))
 
 						val highlighter = HighlightPrinter(
 							terminal = terminal,
-							sourceFile = parserResult.source,
+							sourceFile = sourceFile,
 							theme = theme
 						)
 
-						parserResult.stream.traverseFromRoot(highlighter)
+						stream.traverseFromRoot(highlighter)
 					} catch (e: Exception) {
 						val reason = e.localizedMessage ?: e::class.simpleName ?: "Unknown failure"
 						echo("  ✗ Failed to analyze file ($reason)")
