@@ -50,7 +50,7 @@ class SyntaxStream(
 		}
 	}
 
-	private fun childrenOf(nodeIndex: Int, node: NodeEvent): List<SyntaxEvent> {
+	private fun sliceOf(nodeIndex: Int, node: NodeEvent): List<SyntaxEvent> {
 		val startIndex = nodeIndex - node.slotCount
 		require(startIndex >= 0) {
 			"Invalid node slice boundaries. Computed startIndex ($startIndex) cannot be negative for node at index $nodeIndex with slotCount ${node.slotCount}."
@@ -69,7 +69,7 @@ class SyntaxStream(
 	 */
 	fun computeWidthAt(index: Int): CodeUnits = when (val event = events[index]) {
 		is TokenEvent -> event.width
-		is NodeEvent -> childrenOf(index, event).sumTokenWidths()
+		is NodeEvent -> sliceOf(index, event).sumTokenWidths()
 	}
 
 	/**
