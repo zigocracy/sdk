@@ -48,8 +48,8 @@ class SyntaxStreamBuilder {
 	 * into a single element of the given [kind].
 	 */
 	fun emitNode(mark: StartMark, kind: NodeKind) {
-		val childCount = events.size - mark.startIndex
-		events.add(NodeEvent(kind, childCount))
+		val slotCount = events.size - mark.startIndex
+		events.add(NodeEvent(kind, slotCount))
 	}
 
 	fun build() = SyntaxStream(events, diagnostics)

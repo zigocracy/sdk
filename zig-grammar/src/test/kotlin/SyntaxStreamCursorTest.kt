@@ -256,14 +256,14 @@ class SyntaxStreamCursorTest {
 			val builder = SyntaxStreamBuilder()
 			val fileMark = builder.recordStart()
 			val emptyMark = builder.recordStart()
-			builder.emitNode(emptyMark, NodeKind.PlaceholderStatement) // childCount = 0
+			builder.emitNode(emptyMark, NodeKind.PlaceholderStatement) // slotCount = 0
 			builder.emitNode(fileMark, NodeKind.File)
 
 			val cursor = builder.build().cursor()
 			assertTrue(cursor.down())
 			assertEquals(NodeKind.PlaceholderStatement, cursor.event.kind)
 
-			assertFalse(cursor.down(), "Empty node with zero childCount cannot be descended into")
+			assertFalse(cursor.down(), "Empty node with zero slotCount cannot be descended into")
 			assertEquals(NodeKind.PlaceholderStatement, cursor.event.kind)
 			assertEquals(1, cursor.depth)
 		}

@@ -93,13 +93,13 @@ class SyntaxStreamCursor internal constructor(
 	fun down(): Boolean {
 		val curr = index
 		val currEvent = stream.events[curr]
-		if (currEvent !is NodeEvent || currEvent.childCount == 0) return false
+		if (currEvent !is NodeEvent || currEvent.slotCount == 0) return false
 
-		val firstChildStart = curr - currEvent.childCount
+		val firstChildStart = curr - currEvent.slotCount
 		var child = curr - 1
 		while (true) {
 			val ev = stream.events[child]
-			val slotCount = if (ev is NodeEvent) 1 + ev.childCount else 1
+			val slotCount = if (ev is NodeEvent) 1 + ev.slotCount else 1
 			val prev = child - slotCount
 			if (prev < firstChildStart) break
 			child = prev
@@ -141,7 +141,7 @@ class SyntaxStreamCursor internal constructor(
 		var candidate = parentIndex - 1
 		while (true) {
 			val ev = stream.events[candidate]
-			val slotCount = if (ev is NodeEvent) 1 + ev.childCount else 1
+			val slotCount = if (ev is NodeEvent) 1 + ev.slotCount else 1
 			val prev = candidate - slotCount
 			if (prev == curr) {
 				path[depth] = candidate
@@ -162,11 +162,11 @@ class SyntaxStreamCursor internal constructor(
 		if (depth == 0) return false
 		val parentIndex = path[depth - 1]
 		val parentEvent = stream.events[parentIndex] as NodeEvent
-		val parentStart = parentIndex - parentEvent.childCount
+		val parentStart = parentIndex - parentEvent.slotCount
 
 		val curr = index
 		val currEvent = stream.events[curr]
-		val slotCount = if (currEvent is NodeEvent) 1 + currEvent.childCount else 1
+		val slotCount = if (currEvent is NodeEvent) 1 + currEvent.slotCount else 1
 		val prev = curr - slotCount
 
 		if (prev < parentStart) return false
