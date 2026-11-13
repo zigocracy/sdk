@@ -28,9 +28,9 @@ data class TokenEvent(
 @JvmRecord
 data class NodeEvent(
 	override val kind: NodeKind,
-	val childCount: Int,
+	val slotCount: Int,
 ) : SyntaxEvent {
 	init {
-		require(childCount >= 0) { "Node child count cannot be negative: $childCount" }
+		require(slotCount >= 0) { "Node slot count cannot be negative: $slotCount" }
 	}
 }

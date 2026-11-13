@@ -32,49 +32,54 @@ interface SyntaxStreamVisitor {
 
 
 /**
- * Traverses the syntax stream from the root node down to its leaves using a depth-first strategy.
+ * Traverses the syntax stream starting from the root node in depth-first source order.
  *
- * This function converts the flat post-order event list into a hierarchical tree order,
- * calling the appropriate methods on the [visitor] for each node and token.
+ * Each node is visited via [SyntaxStreamVisitor.enterNode] before traversing its children,
+ * followed by [SyntaxStreamVisitor.leaveNode] once all descendant nodes and tokens have
+ * been processed. Terminal tokens are delivered to [SyntaxStreamVisitor.visitToken] in
+ * their source order with any attached diagnostics.
  *
- * @param visitor The visitor that processes each element during the traversal.
+ * If [SyntaxStreamVisitor.enterNode] returns `false`, the subtree is pruned and
+ * traversal resumes at the next sibling.
+ *
+ * @param visitor The visitor that processes each node and token during traversal.
  */
 fun SyntaxStream.traverseFromRoot(visitor: SyntaxStreamVisitor) {
 	if (events.isEmpty()) return
-	visitElementAt(events.lastIndex, visitor)
-}
+	val cursor = cursor()
 
-private fun SyntaxStream.visitElementAt(index: Int, visitor: SyntaxStreamVisitor) {
-	when (val event = events[index]) {
-		is TokenEvent -> {
-			val tokenDiagnostics = diagnostics.getOrDefault(index, emptyList())
-			visitor.visitToken(index, event, tokenDiagnostics)
-		}
+	while (true) {
+		val index = cursor.index
+		when (val event = cursor.event) {
+			is TokenEvent -> {
+				val tokenDiagnostics = diagnostics.getOrDefault(index, emptyList())
+				visitor.visitToken(index, event, tokenDiagnostics)
 
-		is NodeEvent -> {
-			if (visitor.enterNode(index, event)) {
-				visitChildren(index, event, visitor)
+				if (!cursor.forward()) {
+					if (!cursor.ascendAndLeave(visitor)) break
+				}
 			}
-			visitor.leaveNode(index, event)
+
+			is NodeEvent -> {
+				val shouldDescend = visitor.enterNode(index, event)
+				if (shouldDescend && cursor.down()) {
+					continue
+				} else {
+					visitor.leaveNode(index, event)
+					if (!cursor.forward()) {
+						if (!cursor.ascendAndLeave(visitor)) break
+					}
+				}
+			}
 		}
 	}
 }
 
-private fun SyntaxStream.visitChildren(parentIndex: Int, event: NodeEvent, visitor: SyntaxStreamVisitor) {
-	val childrenSlots = event.childCount
-	if (childrenSlots <= 0) return
-
-	val startIndex = parentIndex - childrenSlots
-	var currentIndex = startIndex
-
-	while (currentIndex < parentIndex) {
-		visitElementAt(currentIndex, visitor)
-
-		val childEvent = events[currentIndex]
-		val innerSlots = if (childEvent is NodeEvent) childEvent.childCount else 0
-
-		// Advance to the next sibling on the same level.
-		// We add 1 for the child itself + the slots of its already processed descendants.
-		currentIndex += 1 + innerSlots
+private fun SyntaxStreamCursor.ascendAndLeave(visitor: SyntaxStreamVisitor): Boolean {
+	while (depth > 0) {
+		up()
+		visitor.leaveNode(index, event as NodeEvent)
+		if (forward()) return true
 	}
+	return false
 }

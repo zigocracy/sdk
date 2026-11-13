@@ -44,16 +44,16 @@ class SyntaxStream(
 			"The final event in the stream must be a structural root node."
 		}
 
-		val expectedChildCount = events.size - 1
-		require(rootEvent.childCount == expectedChildCount) {
-			"The root node must encapsulate all events in the stream. Expected childCount: $expectedChildCount, but got: ${rootEvent.childCount}."
+		val expectedSlotCount = events.size - 1
+		require(rootEvent.slotCount == expectedSlotCount) {
+			"The root node must encapsulate all events in the stream. Expected slotCount: $expectedSlotCount, but got: ${rootEvent.slotCount}."
 		}
 	}
 
-	private fun childrenOf(nodeIndex: Int, node: NodeEvent): List<SyntaxEvent> {
-		val startIndex = nodeIndex - node.childCount
+	private fun sliceOf(nodeIndex: Int, node: NodeEvent): List<SyntaxEvent> {
+		val startIndex = nodeIndex - node.slotCount
 		require(startIndex >= 0) {
-			"Invalid node slice boundaries. Computed startIndex ($startIndex) cannot be negative for node at index $nodeIndex with childCount ${node.childCount}."
+			"Invalid node slice boundaries. Computed startIndex ($startIndex) cannot be negative for node at index $nodeIndex with slotCount ${node.slotCount}."
 		}
 		return events.subList(startIndex, nodeIndex)
 	}
@@ -63,13 +63,13 @@ class SyntaxStream(
 	 *
 	 * Time Complexity:
 	 * - Best Case: Θ(1) if the event is a [TokenEvent].
-	 * - Worst Case: Θ(K) if the event is a [NodeEvent], where K is [NodeEvent.childCount].
+	 * - Worst Case: Θ(K) if the event is a [NodeEvent], where K is [NodeEvent.slotCount].
 	 *
 	 * Memory Complexity: Θ(1)
 	 */
 	fun computeWidthAt(index: Int): CodeUnits = when (val event = events[index]) {
 		is TokenEvent -> event.width
-		is NodeEvent -> childrenOf(index, event).sumTokenWidths()
+		is NodeEvent -> sliceOf(index, event).sumTokenWidths()
 	}
 
 	/**
@@ -80,6 +80,11 @@ class SyntaxStream(
 	 * Memory Complexity: Θ(1)
 	 */
 	fun computeTotalWidth(): CodeUnits = events.sumTokenWidths()
+
+	/**
+	 * Creates a new [SyntaxStreamCursor] positioned at the root node of this stream.
+	 */
+	fun cursor(): SyntaxStreamCursor = SyntaxStreamCursor(this)
 }
 
 /**
