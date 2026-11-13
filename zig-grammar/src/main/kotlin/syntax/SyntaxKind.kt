@@ -157,7 +157,8 @@ enum class TokenKind : SyntaxKind {
 	TopLevelDocComment,
 	// endregion
 
-	ErrorToken;
+	/** Source text that is not part of any valid lexical token. */
+	UnrecognizedToken;
 }
 
 enum class NodeKind : SyntaxKind {

@@ -21,7 +21,7 @@ fun TokenKind.classifyToVisualGroup(): VisualGroup = when (this) {
 	Whitespace -> VisualGroup.Whitespace
 	Newline -> VisualGroup.Newline
 
-	ErrorToken -> VisualGroup.BadCharacter
+	UnrecognizedToken -> VisualGroup.BadCharacter
 
 	BuiltinIdentifier -> VisualGroup.BuiltinIdentifier
 

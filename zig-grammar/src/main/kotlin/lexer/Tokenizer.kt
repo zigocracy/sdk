@@ -32,7 +32,7 @@ object Tokenizer {
 			}
 		}
 
-		return TokenResult(ERROR_EVENT, emptyList())
+		return TokenResult(UNRECOGNIZED_EVENT, emptyList())
 	}
 
 	private fun ScanDiagnostics.toTokenDiagnostic() = TokenDiagnostic(
@@ -41,7 +41,7 @@ object Tokenizer {
 		this.width,
 	)
 
-	private val ERROR_EVENT = TokenEvent(TokenKind.ErrorToken, width = 1)
+	private val UNRECOGNIZED_EVENT = TokenEvent(TokenKind.UnrecognizedToken, width = 1)
 
 	// Must be sorted in order of grammatical domain priority
 	private val scanners = listOf(
